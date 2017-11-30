@@ -22,7 +22,6 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public void connect() throws SqlServiceNotFound, SQLException {
 		dataSource.connect();
-		createTables();
 	}
 
 	@Override
