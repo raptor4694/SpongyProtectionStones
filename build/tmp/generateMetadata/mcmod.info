@@ -1,0 +1,20 @@
+[
+    {
+        "modid": "spongyps",
+        "name": "Spongy Protection Stones",
+        "version": "1.0",
+        "description": "A basic Protection Stones port to Sponge",
+        "dependencies": [
+            "spongeapi@6.0.0"
+        ],
+        "requiredMods": [
+            "spongeapi@6.0.0"
+        ]
+    },
+    {
+        "modid": "spongyprotectionstones",
+        "name": "SpongyProtectionStones",
+        "version": "1.0",
+        "description": "A port of basic protection stone plugin to sponge"
+    }
+]
