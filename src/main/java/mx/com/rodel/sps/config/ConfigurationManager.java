@@ -38,12 +38,18 @@ public class ConfigurationManager {
 		return rootNode;
 	}
 	
+	public CommentedConfigurationNode getNode(String key){
+		return rootNode.getNode(key);
+	}
+	
 	private void defaultValues(){
-		registerDefault("mysql.host", "localhost", null);
-		registerDefault("mysql.port", 3006, null);
-		registerDefault("mysql.database", "mc", null);
-		registerDefault("mysql.username", "user", null);
-		registerDefault("mysql.password", "password", null);
+		registerDefault("storage.mysql.host", "localhost", null);
+		// Fun fact: When i was developing the DB backend, i spend like 2 hours dealing with a "Cannot connect" error, until i see that the port its 3306 and not... 3006 #HumanMistakes... and then remember kids, mysql default port its 3306 THREE THOUSAND, THREE HUNDRED AND SIX!
+		registerDefault("storage.mysql.port", 3306, null);
+		registerDefault("storage.mysql.database", "mc", null);
+		registerDefault("storage.mysql.username", "user", null);
+		registerDefault("storage.mysql.password", "password", null);
+		registerDefault("storage.mysql.protection_table", "protection_stones", null);
 	}
 	
 	private void registerDefault(String key, Object value, String comment){

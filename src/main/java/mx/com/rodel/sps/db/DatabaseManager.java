@@ -4,28 +4,32 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.service.sql.SqlService;
-
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.utils.Helper;
+import mx.com.rodel.sps.db.common.CommonDataSource;
+import mx.com.rodel.sps.db.common.SqlServiceNotFound;
 
-public class DatabaseManager {
+public class DatabaseManager implements CommonDataSource{
 	private SpongyPS pl;
+	private CommonDataSource dataSource;
 	
-	private SqlService sql;
-	private DataSource connection;
-	
-	public DatabaseManager(SpongyPS pl) {
+	public DatabaseManager(SpongyPS pl, CommonDataSource dataSource) {
 		this.pl = pl;
-		
-		if(sql == null){
-			sql = Sponge.getServiceManager().provide(SqlService.class).get();
-		}
+		this.dataSource = dataSource;
 	}
-	
-	public void connect(String host, int port, String database, String user, String password, String table) throws SQLException{
-		String url = Helper.format("jdbc:mysql://[{0}[:{1}]@]{2}/{3}", user, password, host, database);
-		connection = sql.getDataSource(url);
+
+	@Override
+	public DataSource getDataSource() throws SqlServiceNotFound, SQLException {
+		return dataSource.getDataSource();
+	}
+
+	@Override
+	public void connect() throws SqlServiceNotFound, SQLException {
+		dataSource.connect();
+		createTables();
+	}
+
+	@Override
+	public void createTables() {
+		dataSource.createTables();
 	}
 }

@@ -11,6 +11,8 @@ import org.spongepowered.api.plugin.Plugin;
 import com.google.inject.Inject;
 
 import mx.com.rodel.sps.config.ConfigurationManager;
+import mx.com.rodel.sps.db.DatabaseManager;
+import mx.com.rodel.sps.db.common.MySQLAdapter;
 
 @Plugin(id = "spongyps", name = "Spongy Protection Stones", version = "1.0", description = "A basic Protection Stones port to Sponge")
 public class SpongyPS {
@@ -33,6 +35,7 @@ public class SpongyPS {
 	}
 	
 	private ConfigurationManager configManager;
+	private DatabaseManager databaseManager;
 	
 	@Listener
 	public void onPreInit(GamePreInitializationEvent e){
@@ -43,6 +46,14 @@ public class SpongyPS {
 		configManager = new ConfigurationManager(this);
 		configManager.save();
 		configManager.load();
-		//TODO Connect to DB
+
+		// Init DB
+		try {
+			databaseManager = new DatabaseManager(this, new MySQLAdapter(configManager.getNode("storage.mysql.host").getString(), configManager.getNode("storage.mysql.port").getInt(), configManager.getNode("storage.mysql.database").getString(), configManager.getNode("storage.mysql.username").getString(), configManager.getNode("storage.mysql.password").getString(), configManager.getNode("storage.mysql.protection_table").getString()));
+			databaseManager.connect();
+		} catch (Exception e2) {
+			log.error("Error connecting to db:");
+			e2.printStackTrace();
+		}
 	}
 }

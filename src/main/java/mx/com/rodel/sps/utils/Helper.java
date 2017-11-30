@@ -39,7 +39,8 @@ public class Helper {
 	
 	public static String format(String string, Object... arguments){
 		for (int i = 0; i < arguments.length; i++) {
-			string = string.replace("{"+i+"}", arguments[0].toString());
+			System.out.println(arguments[i]);
+			string = string.replace("{"+i+"}", arguments[i].toString());
 		}
 		return string;
 	}
