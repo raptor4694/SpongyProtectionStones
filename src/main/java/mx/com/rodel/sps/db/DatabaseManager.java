@@ -4,21 +4,18 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.db.common.CommonDataSource;
 import mx.com.rodel.sps.db.common.SqlServiceNotFound;
 
 public class DatabaseManager implements CommonDataSource{
-	private SpongyPS pl;
 	private CommonDataSource dataSource;
 	
-	public DatabaseManager(SpongyPS pl, CommonDataSource dataSource) {
-		this.pl = pl;
+	public DatabaseManager(CommonDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
 	@Override
-	public DataSource getDataSource() throws SqlServiceNotFound, SQLException {
+	public DataSource getDataSource() {
 		return dataSource.getDataSource();
 	}
 
@@ -29,7 +26,7 @@ public class DatabaseManager implements CommonDataSource{
 	}
 
 	@Override
-	public void createTables() {
+	public void createTables() throws SQLException {
 		dataSource.createTables();
 	}
 }

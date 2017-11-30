@@ -16,7 +16,7 @@ public interface CommonDataSource {
 	 * @throws SqlServiceNotFound 
 	 * @throws SQLException 
 	 */
-	abstract DataSource getDataSource() throws SqlServiceNotFound, SQLException;
+	abstract DataSource getDataSource();
 	
 	/**
 	 * Connect to table wrapper
@@ -27,8 +27,9 @@ public interface CommonDataSource {
 
 	/**
 	 * Create table wrapper
+	 * @throws SQLException 
 	 */
-	abstract void createTables();
+	abstract void createTables() throws SQLException;
 
 	/**
 	 * Return the Sponge native SqlService

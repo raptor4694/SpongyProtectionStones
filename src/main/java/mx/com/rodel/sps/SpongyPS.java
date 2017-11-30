@@ -49,7 +49,8 @@ public class SpongyPS {
 
 		// Init DB
 		try {
-			databaseManager = new DatabaseManager(this, new MySQLAdapter(configManager.getNode("storage.mysql.host").getString(), configManager.getNode("storage.mysql.port").getInt(), configManager.getNode("storage.mysql.database").getString(), configManager.getNode("storage.mysql.username").getString(), configManager.getNode("storage.mysql.password").getString(), configManager.getNode("storage.mysql.protection_table").getString()));
+			// Currently only mysql support
+			databaseManager = new DatabaseManager(new MySQLAdapter(configManager.getNode("storage.mysql.host").getString(), configManager.getNode("storage.mysql.port").getInt(), configManager.getNode("storage.mysql.database").getString(), configManager.getNode("storage.mysql.username").getString(), configManager.getNode("storage.mysql.password").getString(), configManager.getNode("storage.mysql.protection_table").getString()));
 			databaseManager.connect();
 		} catch (Exception e2) {
 			log.error("Error connecting to db:");
