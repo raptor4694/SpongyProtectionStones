@@ -1,4 +1,4 @@
-package mx.com.rodel.sps;
+package mx.com.rodel.sps.protection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,10 @@ public class Protection {
 	private List<UUID> members = new ArrayList<>();
 	private World world;
 	private Vector3d center, pos1, pos2;
+	
+	public Protection(int id) {
+		this.id = id;
+	}
 	
 	public Protection(World world, Vector3d center, Vector3d pos1, Vector3d pos2) {
 		this.world = world;

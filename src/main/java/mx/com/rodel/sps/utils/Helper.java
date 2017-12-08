@@ -1,6 +1,17 @@
 package mx.com.rodel.sps.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
+
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3i;
 
 public class Helper {
 	public static boolean isInside(int x1, int y1, int z1, int x2, int y2, int z2, int x, int y, int z){
@@ -37,11 +48,37 @@ public class Helper {
 		};
 	}
 	
+	
+	public static List<Vector3i> calculateCenter(Location<World> center){
+		Vector3i max = clampCoords(center.copy().sub(5, 5, 5).getBlockPosition());
+		Vector3i min = clampCoords(center.copy().sub(-5, -5, -5).getBlockPosition());
+		Vector3i rmax = max.max(min);
+		Vector3i rmin = max.min(min);
+		return Arrays.asList(new Vector3i[] {rmax, rmin});
+	}
+	
+	public static Vector3i clampCoords(Vector3i vec){
+		return new Vector3i(vec.getX(), clamp(vec.getY(), 0, 255), vec.getZ());
+		
+	}
+	
+	public static int clamp(int val, int min, int max) {
+	    return Math.max(min, Math.min(max, val));
+	}
+	
+	public static double clamp(double val, double min, double max) {
+	    return Math.max(min, Math.min(max, val));
+	}
+	
 	public static String format(String string, Object... arguments){
 		for (int i = 0; i < arguments.length; i++) {
 			System.out.println(arguments[i]);
 			string = string.replace("{"+i+"}", arguments[i].toString());
 		}
 		return string;
+	}
+	
+	public static Optional<Player> playerCause(Cause cause){
+		return cause.first(Player.class);
 	}
 }
