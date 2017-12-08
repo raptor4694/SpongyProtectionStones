@@ -39,8 +39,8 @@ public class ConfigurationManager {
 		return rootNode;
 	}
 	
-	public CommentedConfigurationNode getNode(Object... key){
-		return rootNode.getNode(key);
+	public static CommentedConfigurationNode getNode(Object... key){
+		return SpongyPS.getInstance().getConfigManger().rootNode.getNode(key);
 	}
 	
 	public void load(){
