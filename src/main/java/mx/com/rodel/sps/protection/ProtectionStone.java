@@ -1,21 +1,41 @@
 package mx.com.rodel.sps.protection;
 
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.text.Text;
 
-public interface ProtectionStone {
-	/**
-	 * The block that will need to be placed to protect the zone with defined {@link ProtectionStone#getRange()}
-	 * 
-	 * @return
-	 */
-	public BlockType getBlockType();
+import mx.com.rodel.sps.utils.Helper;
+
+public class ProtectionStone {
+	private String name;
+	private BlockType blockType;
+	private int range;
+	private String displayName;
+
+	public ProtectionStone(String name, BlockType blockType, int range, String displayName) {
+		this.name = name;
+		this.blockType = blockType;
+		this.range = range;
+		this.displayName = displayName;
+
+	}
 	
-	/**
-	 * If the range its 11x11 then the stone will protect, 5 block on each side and one in the center <pre>5+5+1 = 11</pre>
-	 * 
-	 * @return
-	 */
-	public int getRange();
+	public String getName(){
+		return name;
+	}
 	
-	public String getDisplayName();
+	public BlockType getBlockType(){
+		return blockType;
+	}
+	
+	public int getRange(){
+		return range;
+	}
+	
+	public String getDisplayName(){
+		return displayName;
+	}
+	
+	public Text toText(){
+		return Helper.chatColor("&6"+displayName+"\n&c>> Name: &a"+name+"\n&c>> Block: &a"+blockType.getId()+"\n&c>> Range: &a"+range);
+	}
 }

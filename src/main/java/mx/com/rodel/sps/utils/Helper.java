@@ -1,6 +1,5 @@
 package mx.com.rodel.sps.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -8,6 +7,8 @@ import java.util.Optional;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -80,5 +81,9 @@ public class Helper {
 	
 	public static Optional<Player> playerCause(Cause cause){
 		return cause.first(Player.class);
+	}
+	
+	public static Text chatColor(String text){
+		return TextSerializers.FORMATTING_CODE.deserialize(text);
 	}
 }

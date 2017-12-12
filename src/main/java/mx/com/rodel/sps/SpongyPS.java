@@ -1,8 +1,10 @@
 package mx.com.rodel.sps;
 
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -13,7 +15,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.text.Text;
 
 import com.google.inject.Inject;
@@ -22,9 +23,9 @@ import mx.com.rodel.sps.command.SPSCommand;
 import mx.com.rodel.sps.config.ConfigurationManager;
 import mx.com.rodel.sps.db.DatabaseManager;
 import mx.com.rodel.sps.db.common.MySQLAdapter;
+import mx.com.rodel.sps.limits.LimitsManager;
 import mx.com.rodel.sps.listener.ProtectionPlaceEvent;
 import mx.com.rodel.sps.protection.ProtectionManager;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 @Plugin(id = "spongyps", name = "Spongy Protection Stones", version = "1.0", description = "A basic Protection Stones port to Sponge")
 public class SpongyPS {
@@ -58,6 +59,14 @@ public class SpongyPS {
 	}
 	private DatabaseManager databaseManager;
 	private ProtectionManager protectionManager;
+	public ProtectionManager getProtectionManager(){
+		return protectionManager;
+	}
+	
+	private LimitsManager limitsManager;
+	public LimitsManager getLimitsManager(){
+		return limitsManager;
+	}
 	
 	@Listener
 	public void onPreInit(GamePreInitializationEvent e){
@@ -70,7 +79,9 @@ public class SpongyPS {
 		
 		protectionManager = new ProtectionManager(this);
 		protectionManager.loadStones();
-		
+
+		limitsManager = new LimitsManager();
+		limitsManager.loadLimits();
 
 		// Init DB
 		try {
@@ -82,14 +93,18 @@ public class SpongyPS {
 			e2.printStackTrace();
 		}
 
-		HashMap<String, Integer> choices = new HashMap<>();
-		choices.put("limits", 23);
+		Map<String, Object> commandChoices = Arrays.asList(
+				// Command Choices
+				new String[] {"groups", "stones", "limits"}
+			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 		
 		CommandSpec psCommand = CommandSpec.builder()
 				.description(Text.of("Main SPS command"))
 				.permission("sps.command.use")
-				.executor(new SPSCommand())
-				.arguments(GenericArguments.choices(Text.of("subcommand"), choices))
+				.executor(new SPSCommand(this))
+				.arguments(
+							GenericArguments.choices(Text.of("subcommand"), commandChoices)
+						)
 				.build();
 		
 		Sponge.getCommandManager().register(this, psCommand, "ps", "sps");
