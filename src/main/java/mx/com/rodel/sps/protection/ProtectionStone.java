@@ -3,6 +3,8 @@ package mx.com.rodel.sps.protection;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.text.Text;
 
+import com.google.common.base.Objects;
+
 import mx.com.rodel.sps.utils.Helper;
 
 public class ProtectionStone {
@@ -33,6 +35,16 @@ public class ProtectionStone {
 	
 	public String getDisplayName(){
 		return displayName;
+	}
+	
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this)
+				.add("name", name)
+				.add("blockType", blockType)
+				.add("range", range)
+				.add("displayName", displayName)
+				.toString();
 	}
 	
 	public Text toText(){

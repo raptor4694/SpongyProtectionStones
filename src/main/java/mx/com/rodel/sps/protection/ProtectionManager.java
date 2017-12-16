@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -16,7 +15,6 @@ import com.google.common.collect.Maps;
 
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.config.ConfigurationManager;
-import mx.com.rodel.sps.utils.Helper;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 public class ProtectionManager {

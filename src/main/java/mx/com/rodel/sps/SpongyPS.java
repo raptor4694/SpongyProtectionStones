@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -21,6 +23,7 @@ import com.google.inject.Inject;
 
 import mx.com.rodel.sps.command.SPSCommand;
 import mx.com.rodel.sps.config.ConfigurationManager;
+import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.db.DatabaseManager;
 import mx.com.rodel.sps.db.common.MySQLAdapter;
 import mx.com.rodel.sps.limits.LimitsManager;
@@ -42,6 +45,13 @@ public class SpongyPS {
 	}
 	
 	@Inject
+	@ConfigDir(sharedRoot = false)
+	private Path configDir;
+	public Path getConfigDir(){
+		return configDir;
+	}
+	
+	@Inject
 	private Logger log;
 	public Logger getLogger(){
 		return log;
@@ -58,14 +68,29 @@ public class SpongyPS {
 		return configManager;
 	}
 	private DatabaseManager databaseManager;
+	public DatabaseManager getDatabaseManger(){
+		return databaseManager;
+	}
+	
 	private ProtectionManager protectionManager;
 	public ProtectionManager getProtectionManager(){
 		return protectionManager;
 	}
 	
+	private LangManager langManager;
+	public LangManager getLangManager(){
+		return langManager;
+	}
+	
 	private LimitsManager limitsManager;
 	public LimitsManager getLimitsManager(){
 		return limitsManager;
+	}
+	
+	@Listener
+	public void onReload(GameReloadEvent e){
+		configManager.load();
+		langManager.load();
 	}
 	
 	@Listener
@@ -77,6 +102,9 @@ public class SpongyPS {
 		configManager = new ConfigurationManager(this);
 		configManager.load();
 		
+		langManager = new LangManager(this);
+		langManager.load();
+		
 		protectionManager = new ProtectionManager(this);
 		protectionManager.loadStones();
 
@@ -86,7 +114,13 @@ public class SpongyPS {
 		// Init DB
 		try {
 			// Currently only mysql support
-			databaseManager = new DatabaseManager(new MySQLAdapter(configManager.getNode("storage", "mysql", "host").getString(), configManager.getNode("storage", "mysql", "port").getInt(), configManager.getNode("storage", "mysql", "database").getString(), configManager.getNode("storage", "mysql", "username").getString(), configManager.getNode("storage", "mysql", "password").getString(), configManager.getNode("storage", "mysql", "protection-table").getString()));
+			databaseManager = new DatabaseManager(new MySQLAdapter(
+					configManager.getRoot().getNode("storage", "mysql", "host").getString(), 
+					configManager.getRoot().getNode("storage", "mysql", "port").getInt(),
+					configManager.getRoot().getNode("storage", "mysql", "database").getString(), 
+					configManager.getRoot().getNode("storage", "mysql", "username").getString(), 
+					configManager.getRoot().getNode("storage", "mysql", "password").getString(), 
+					configManager.getRoot().getNode("storage", "mysql", "protection-table").getString()));
 			databaseManager.connect();
 		} catch (Exception e2) {
 			log.error("Error connecting to db:");

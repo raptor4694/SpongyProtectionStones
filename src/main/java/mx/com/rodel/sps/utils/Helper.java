@@ -1,7 +1,5 @@
 package mx.com.rodel.sps.utils;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -50,12 +48,12 @@ public class Helper {
 	}
 	
 	
-	public static List<Vector3i> calculateCenter(Location<World> center){
+	public static Vector3i[] calculateCenter(Location<World> center){
 		Vector3i max = clampCoords(center.copy().sub(5, 5, 5).getBlockPosition());
 		Vector3i min = clampCoords(center.copy().sub(-5, -5, -5).getBlockPosition());
 		Vector3i rmax = max.max(min);
 		Vector3i rmin = max.min(min);
-		return Arrays.asList(new Vector3i[] {rmax, rmin});
+		return new Vector3i[] {rmin, rmax};
 	}
 	
 	public static Vector3i clampCoords(Vector3i vec){

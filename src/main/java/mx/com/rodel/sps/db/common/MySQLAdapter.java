@@ -1,7 +1,10 @@
 package mx.com.rodel.sps.db.common;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -58,6 +61,22 @@ public class MySQLAdapter implements CommonDataSource{
 		}
 	}
 
+	@Override
+	public int countProtectionsOfType(UUID uuid, String name) {
+		try (Connection conn = getDataSource().getConnection()){
+			PreparedStatement ps = conn.prepareStatement("select count(*) from "+protection_table+" where `owner`=? and `type`=?");
+			ps.setString(1, uuid.toString());
+			ps.setString(2, name);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getInt("count(*)");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
 	@Override
 	public HikariDataSource getDataSource() {
 		return dataSource;

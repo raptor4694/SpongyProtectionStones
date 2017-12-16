@@ -2,6 +2,7 @@ package mx.com.rodel.sps.db.common;
 
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -31,6 +32,9 @@ public interface CommonDataSource {
 	 */
 	abstract void createTables() throws SQLException;
 
+	
+	abstract int countProtectionsOfType(UUID uuid, String name);
+	
 	/**
 	 * Return the Sponge native SqlService
 	 * 

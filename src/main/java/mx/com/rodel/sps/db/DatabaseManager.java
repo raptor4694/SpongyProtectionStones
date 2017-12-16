@@ -1,6 +1,7 @@
 package mx.com.rodel.sps.db;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -27,5 +28,10 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public void createTables() throws SQLException {
 		dataSource.createTables();
+	}
+	
+	@Override
+	public int countProtectionsOfType(UUID uuid, String name) {
+		return dataSource.countProtectionsOfType(uuid, name);
 	}
 }
