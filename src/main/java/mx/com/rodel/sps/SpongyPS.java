@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
@@ -29,6 +30,7 @@ import mx.com.rodel.sps.db.common.MySQLAdapter;
 import mx.com.rodel.sps.limits.LimitsManager;
 import mx.com.rodel.sps.listener.ProtectionPlaceEvent;
 import mx.com.rodel.sps.protection.ProtectionManager;
+import mx.com.rodel.sps.utils.Helper;
 
 @Plugin(id = "spongyps", name = "Spongy Protection Stones", version = "1.0", description = "A basic Protection Stones port to Sponge")
 public class SpongyPS {
@@ -88,13 +90,18 @@ public class SpongyPS {
 	}
 	
 	@Listener
-	public void onReload(GameReloadEvent e){
+	public void onGameReloadEvent(GameReloadEvent e){
+		reload(Sponge.getServer().getConsole());
+	}
+	
+	public void reload(CommandSource cause){
 		configManager.load();
 		langManager.load();
+		cause.sendMessage(Helper.chatColor("&aSPS Reloaded"));
 	}
 	
 	@Listener
-	public void onPreInit(GamePreInitializationEvent e){
+	public void onGamePreInitializationEvent(GamePreInitializationEvent e){
 		instance = this;
 		
 		log.info("Initializing Spongy Protection Stones!");
@@ -129,12 +136,11 @@ public class SpongyPS {
 
 		Map<String, Object> commandChoices = Arrays.asList(
 				// Command Choices
-				new String[] {"groups", "stones", "limits"}
+				new String[] {"groups", "stones", "limits", "reload"}
 			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 		
 		CommandSpec psCommand = CommandSpec.builder()
 				.description(Text.of("Main SPS command"))
-				.permission("sps.command.use")
 				.executor(new SPSCommand(this))
 				.arguments(
 							GenericArguments.choices(Text.of("subcommand"), commandChoices)

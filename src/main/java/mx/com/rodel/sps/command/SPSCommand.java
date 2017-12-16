@@ -14,6 +14,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.limits.Group;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
@@ -38,36 +39,57 @@ public class SPSCommand implements CommandExecutor {
 		
 		switch (subcommand) {
 			case "groups":
-				pagination.title(Text.of("Groups"));
-				
-				List<Group> groups = pl.getLimitsManager().getGroups();
-				pagination.contents(groups.stream().map(Group::toText).collect(Collectors.toList()));
-				
-				pagination.build().sendTo(src);
-				break;
-			case "stones":
-				pagination.title(Text.of("Stones"));
-				
-				List<ProtectionStone> protectionStone = pl.getProtectionManager().getStones();
-				pagination.contents(protectionStone.stream().map(ProtectionStone::toText).collect(Collectors.toList()));
-				
-				pagination.build().sendTo(src);
-				break;
-			case "limits":
-				if(player!=null){
-					pagination.title(Text.of("Limits"));
+				if(testPermission(src, "sps.command.groups")){
+					pagination.title(Text.of("Groups"));
 					
-					Map<ProtectionStone, Integer> limits = pl.getLimitsManager().getLimits(player);
-					pagination.contents(limits.entrySet().stream().map(entry -> Helper.chatColor("&6"+entry.getKey().getDisplayName()+": &7"+entry.getValue())).collect(Collectors.toList()));
+					List<Group> groups = pl.getLimitsManager().getGroups();
+					pagination.contents(groups.stream().map(Group::toText).collect(Collectors.toList()));
 					
 					pagination.build().sendTo(src);
-				}else{
-					src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
+					
+				}
+				break;
+			case "stones":
+				if(testPermission(src, "sps.command.stones")){
+					pagination.title(Text.of("Stones"));
+					
+					List<ProtectionStone> protectionStone = pl.getProtectionManager().getStones();
+					pagination.contents(protectionStone.stream().map(ProtectionStone::toText).collect(Collectors.toList()));
+					
+					pagination.build().sendTo(src);
+				}
+				break;
+			case "limits":
+				if(testPermission(src, "sps.command.limits")){
+					if(player!=null){
+						pagination.title(Text.of("Limits"));
+						
+						Map<ProtectionStone, Integer> limits = pl.getLimitsManager().getLimits(player);
+						pagination.contents(limits.entrySet().stream().map(entry -> Helper.chatColor("&6"+entry.getKey().getDisplayName()+": &7"+entry.getValue())).collect(Collectors.toList()));
+						
+						pagination.build().sendTo(src);
+					}else{
+						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
+					}
+				}
+				break;
+			case "reload":
+				if(testPermission(src, "sps.command.reload")){
+					pl.reload(src);
 				}
 				break;
 			default:
 				return CommandResult.empty();
 		}
 		return CommandResult.success();
+	}
+	
+	public boolean testPermission(CommandSource src, String permission){
+		if(src.hasPermission(permission)){
+			return true;
+		}
+		
+		src.sendMessage(LangManager.translate("no-permission"));
+		return false;
 	}
 }
