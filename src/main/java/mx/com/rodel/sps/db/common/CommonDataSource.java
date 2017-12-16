@@ -8,6 +8,10 @@ import javax.sql.DataSource;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3i;
 
 public interface CommonDataSource {
 	/**
@@ -34,6 +38,8 @@ public interface CommonDataSource {
 
 	
 	abstract int countProtectionsOfType(UUID uuid, String name);
+	
+	abstract void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
 	
 	/**
 	 * Return the Sponge native SqlService

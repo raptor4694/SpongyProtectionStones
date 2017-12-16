@@ -48,9 +48,9 @@ public class Helper {
 	}
 	
 	
-	public static Vector3i[] calculateCenter(Location<World> center){
-		Vector3i max = clampCoords(center.copy().sub(5, 5, 5).getBlockPosition());
-		Vector3i min = clampCoords(center.copy().sub(-5, -5, -5).getBlockPosition());
+	public static Vector3i[] calculateCenter(int range, Location<World> center){
+		Vector3i max = clampCoords(center.copy().sub(range, range, range).getBlockPosition());
+		Vector3i min = clampCoords(center.copy().sub(-range, -range, -range).getBlockPosition());
 		Vector3i rmax = max.max(min);
 		Vector3i rmin = max.min(min);
 		return new Vector3i[] {rmin, rmax};

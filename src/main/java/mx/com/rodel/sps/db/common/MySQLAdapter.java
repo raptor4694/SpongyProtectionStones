@@ -6,8 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3i;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import mx.com.rodel.sps.utils.Helper;
 
 public class MySQLAdapter implements CommonDataSource{
 	private HikariDataSource dataSource;
@@ -19,6 +25,11 @@ public class MySQLAdapter implements CommonDataSource{
 		this.username = username;
 		this.password = password;
 		connectionURL = "jdbc:mysql://"+host+":"+port+"/"+database;
+	}
+	
+	@Override
+	public HikariDataSource getDataSource() {
+		return dataSource;
 	}
 	
 	@Override
@@ -77,8 +88,33 @@ public class MySQLAdapter implements CommonDataSource{
 		return 0;
 	}
 	
+
 	@Override
-	public HikariDataSource getDataSource() {
-		return dataSource;
+	public void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+		try (Connection conn = getDataSource().getConnection()) {
+			String query = "insert into "+protection_table+" "
+					+ "(`owner`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `centerx`, `centery`, `centerz`, `world`, `type`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement ps = conn.prepareStatement(query);
+			int i = 1;
+			//Owner
+			ps.setString(i, owner.toString()); i++;
+			//Min
+			ps.setInt(i, min.getX()); i++;
+			ps.setInt(i, min.getY()); i++;
+			ps.setInt(i, min.getZ()); i++;
+			//Max
+			ps.setInt(i, max.getX()); i++;
+			ps.setInt(i, max.getY()); i++;
+			ps.setInt(i, max.getZ()); i++;
+			//Center
+			ps.setInt(i, location.getBlockX()); i++;
+			ps.setInt(i, location.getBlockY()); i++;
+			ps.setInt(i, location.getBlockZ()); i++;
+			//World
+			ps.setString(i, location.getExtent().getUniqueId().toString()); i++;
+			//Type
+			ps.setString(i, protectionType); i++;
+			ps.executeUpdate();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package mx.com.rodel.sps.protection;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -7,9 +8,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -69,6 +72,16 @@ public class ProtectionManager {
 	
 		return new ProtectionStone(name, type, range, displayName);
 		
+	}
+	
+	public static boolean createProtection(Player owner, Vector3i min, Vector3i max, Location<World> location, String protectionType){
+		try {
+			SpongyPS.getInstance().getDatabaseManger().createProtection(owner.getUniqueId(), min, max, location, protectionType);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public void isRegion(Location<World> world){

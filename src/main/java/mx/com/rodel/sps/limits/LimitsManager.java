@@ -57,7 +57,7 @@ public class LimitsManager {
 		
 		for(ProtectionStone stone : SpongyPS.getInstance().getProtectionManager().getStones()){
 			if(ogroup.isPresent()){
-				limits.put(stone, ogroup.get().getLimit(stone.getName()).orElse(0));
+				limits.put(stone, ogroup.get().getLimit(stone.getName()).orElse(0)-SpongyPS.getInstance().getDatabaseManger().countProtectionsOfType(player.getUniqueId(), stone.getName()));
 			}else{
 				limits.put(stone, 0);
 			}

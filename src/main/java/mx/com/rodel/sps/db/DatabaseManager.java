@@ -5,6 +5,11 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3i;
+
 import mx.com.rodel.sps.db.common.CommonDataSource;
 import mx.com.rodel.sps.db.common.SqlServiceNotFound;
 
@@ -33,5 +38,10 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public int countProtectionsOfType(UUID uuid, String name) {
 		return dataSource.countProtectionsOfType(uuid, name);
+	}
+
+	@Override
+	public void createProtection(UUID owner, Vector3i max, Vector3i min, Location<World> location, String protectionType) throws SQLException {
+		dataSource.createProtection(owner, max, min, location, protectionType);
 	}
 }
