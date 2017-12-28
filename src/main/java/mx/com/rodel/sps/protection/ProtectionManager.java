@@ -84,7 +84,7 @@ public class ProtectionManager {
 		return false;
 	}
 	
-	public void isRegion(Location<World> world){
-		
+	public static Optional<Protection> isRegion(Location<World> world){
+		return Optional.ofNullable(SpongyPS.getInstance().getDatabaseManger().searchRegion(world.getExtent().getUniqueId(), world.getBlockX(), world.getBlockY(), world.getBlockZ()));
 	}
 }

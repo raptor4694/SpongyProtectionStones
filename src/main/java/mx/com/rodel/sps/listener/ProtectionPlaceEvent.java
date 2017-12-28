@@ -29,6 +29,7 @@ public class ProtectionPlaceEvent {
 				if(ostone.isPresent()){
 					// Protection placing code
 					ProtectionStone stone = ostone.get();
+					System.out.println(stone.toString());
 					
 					ImmutableMap<ProtectionStone, Integer> limits = SpongyPS.getInstance().getLimitsManager().getLimits(player);
 					Integer limit = limits.get(stone);

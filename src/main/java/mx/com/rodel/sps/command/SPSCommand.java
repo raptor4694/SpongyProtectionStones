@@ -1,7 +1,10 @@
 package mx.com.rodel.sps.command;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.spongepowered.api.command.CommandException;
@@ -16,6 +19,8 @@ import org.spongepowered.api.text.Text;
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.limits.Group;
+import mx.com.rodel.sps.protection.Protection;
+import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -23,8 +28,14 @@ public class SPSCommand implements CommandExecutor {
 	
 	private SpongyPS pl;
 	
+	public Map<String, Object> commandChoices;
+	
 	public SPSCommand(SpongyPS pl) {
 		this.pl = pl;
+		commandChoices = Arrays.asList(
+				// Command Choices
+				new String[] {"groups", "stones", "limits", "reload", "info"}
+			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 	}
 	
 	@Override
@@ -76,6 +87,20 @@ public class SPSCommand implements CommandExecutor {
 			case "reload":
 				if(testPermission(src, "sps.command.reload")){
 					pl.reload(src);
+				}
+				break;
+			case "info":
+				if(testPermission(src, "sps.command.info")){
+					if(player!=null){
+						Optional<Protection> protection = ProtectionManager.isRegion(player.getLocation());
+						if(protection.isPresent()){
+							System.out.println(protection.get().toString());
+						}else{
+							src.sendMessage(Helper.chatColor("&c"+LangManager.translate("info-nostone")));	
+						}
+					}else{
+						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
+					}
 				}
 				break;
 			default:

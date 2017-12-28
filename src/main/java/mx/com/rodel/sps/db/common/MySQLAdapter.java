@@ -4,16 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.utils.Helper;
+import mx.com.rodel.sps.utils.WorldNotFoundException;
 
 public class MySQLAdapter implements CommonDataSource{
 	private HikariDataSource dataSource;
@@ -70,6 +79,47 @@ public class MySQLAdapter implements CommonDataSource{
 					+ "ENGINE=InnoDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;";
 			conn.prepareStatement(query).execute();
 		}
+	}
+	
+	@Override
+	public Protection searchRegion(UUID world, int x, int y, int z) {
+		try (Connection conn = getDataSource().getConnection()){
+			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `world`=? and `minx`<? and `miny`<? and `minz`<? and `maxx`>? and `maxy`>? and `maxz`>?");
+			int i = 1;
+			ps.setString(i, world.toString()); i++;
+			ps.setInt(i, x); i++;
+			ps.setInt(i, y); i++;
+			ps.setInt(i, z); i++;
+			ps.setInt(i, x); i++;
+			ps.setInt(i, y); i++;
+			ps.setInt(i, z); i++;
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return createProtection(rs);
+			}
+		} catch (SQLException | WorldNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Protection createProtection(ResultSet rs) throws SQLException, WorldNotFoundException{
+		String worldUID = rs.getString("world");
+		World world = Sponge.getServer().getWorld(UUID.fromString(worldUID)).orElseThrow(()->new WorldNotFoundException(worldUID));
+		String flag = rs.getString("flags");
+		List<String> flags = flag==null ? new ArrayList<>() : Arrays.asList(flag.split(";"));
+		
+		String member = rs.getString("members");
+		List<UUID> members = member==null ? new ArrayList<>() : Arrays.asList(member.split(";")).stream().map(UUID::fromString).collect(Collectors.toList());
+		
+		return new Protection(
+				world, 
+				UUID.fromString(rs.getString("owner")), 
+				new Vector3i(rs.getInt("centerx"), rs.getInt("centery"), rs.getInt("centerz")), 
+				new Vector3i(rs.getInt("minx"), rs.getInt("miny"), rs.getInt("minz")), 
+				new Vector3i(rs.getInt("maxx"), rs.getInt("maxy"), rs.getInt("maxz")), 
+				members, 
+				flags);
 	}
 
 	@Override

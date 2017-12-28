@@ -12,6 +12,7 @@ import com.flowpowered.math.vector.Vector3i;
 
 import mx.com.rodel.sps.db.common.CommonDataSource;
 import mx.com.rodel.sps.db.common.SqlServiceNotFound;
+import mx.com.rodel.sps.protection.Protection;
 
 public class DatabaseManager implements CommonDataSource{
 	private CommonDataSource dataSource;
@@ -44,4 +45,10 @@ public class DatabaseManager implements CommonDataSource{
 	public void createProtection(UUID owner, Vector3i max, Vector3i min, Location<World> location, String protectionType) throws SQLException {
 		dataSource.createProtection(owner, max, min, location, protectionType);
 	}
+	
+	@Override
+	public Protection searchRegion(UUID world, int x, int y, int z) {
+		return dataSource.searchRegion(world, x, y, z);
+	}
+	
 }

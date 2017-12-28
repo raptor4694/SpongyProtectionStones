@@ -1,10 +1,6 @@
 package mx.com.rodel.sps;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -134,16 +130,14 @@ public class SpongyPS {
 			e2.printStackTrace();
 		}
 
-		Map<String, Object> commandChoices = Arrays.asList(
-				// Command Choices
-				new String[] {"groups", "stones", "limits", "reload"}
-			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
+		
+		SPSCommand command = new SPSCommand(this);
 		
 		CommandSpec psCommand = CommandSpec.builder()
 				.description(Text.of("Main SPS command"))
-				.executor(new SPSCommand(this))
+				.executor(command)
 				.arguments(
-							GenericArguments.choices(Text.of("subcommand"), commandChoices)
+							GenericArguments.choices(Text.of("subcommand"), command.commandChoices)
 						)
 				.build();
 		

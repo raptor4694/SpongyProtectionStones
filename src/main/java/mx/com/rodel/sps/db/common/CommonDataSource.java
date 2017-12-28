@@ -13,6 +13,8 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import mx.com.rodel.sps.protection.Protection;
+
 public interface CommonDataSource {
 	/**
 	 * Get {@link DataSource} wrapper
@@ -40,6 +42,8 @@ public interface CommonDataSource {
 	abstract int countProtectionsOfType(UUID uuid, String name);
 	
 	abstract void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
+	
+	abstract Protection searchRegion(UUID world, int x, int y, int z);
 	
 	/**
 	 * Return the Sponge native SqlService
