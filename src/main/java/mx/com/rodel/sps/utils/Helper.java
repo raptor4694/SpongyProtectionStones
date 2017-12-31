@@ -46,11 +46,37 @@ public class Helper {
 			}
 		};
 	}
+
+	/**
+	 * Get four vertices of a protection stone
+	 * 
+	 * @param range
+	 * @param center
+	 * @return
+	 */
+	public static Vector3i[] getVertices(int range, Location<World> center){
+		Vector3i[] bounds = new Vector3i[8];
+		bounds[0] = clampCoords(center.copy().sub(range, range, range).getBlockPosition());
+		bounds[1] = clampCoords(center.copy().sub(range, range, -range).getBlockPosition());
+		bounds[2] = clampCoords(center.copy().sub(range, -range, range).getBlockPosition());
+		bounds[3] = clampCoords(center.copy().sub(range, -range, -range).getBlockPosition());
+		bounds[4] = clampCoords(center.copy().sub(-range, range, range).getBlockPosition());
+		bounds[5] = clampCoords(center.copy().sub(-range, range, -range).getBlockPosition());
+		bounds[6] = clampCoords(center.copy().sub(-range, -range, range).getBlockPosition());
+		bounds[7] = clampCoords(center.copy().sub(-range, -range, -range).getBlockPosition());
+		return bounds;
+	}
 	
-	
-	public static Vector3i[] calculateCenter(int range, Location<World> center){
-		Vector3i max = clampCoords(center.copy().sub(range, range, range).getBlockPosition());
-		Vector3i min = clampCoords(center.copy().sub(-range, -range, -range).getBlockPosition());
+	/**
+	 * Get max and min vertices order in 0 = min 1 = max
+	 * 
+	 * @param range
+	 * @param center
+	 * @return
+	 */
+	public static Vector3i[] get2Vertices(int range, Vector3i center){
+		Vector3i max = clampCoords(center.clone().sub(range, range, range));
+		Vector3i min = clampCoords(center.clone().sub(-range, -range, -range));
 		Vector3i rmax = max.max(min);
 		Vector3i rmin = max.min(min);
 		return new Vector3i[] {rmin, rmax};

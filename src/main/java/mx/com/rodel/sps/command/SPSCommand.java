@@ -34,7 +34,7 @@ public class SPSCommand implements CommandExecutor {
 		this.pl = pl;
 		commandChoices = Arrays.asList(
 				// Command Choices
-				new String[] {"groups", "stones", "limits", "reload", "info"}
+				new String[] {"groups", "stones", "limits", "reload", "info", "sreload"}
 			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 	}
 	
@@ -89,6 +89,12 @@ public class SPSCommand implements CommandExecutor {
 					pl.reload(src);
 				}
 				break;
+			case "sreload":
+				if(testPermission(src, "sps.command.sreload")){
+					SpongyPS.getInstance().getProtectionManager().reload();
+					src.sendMessage(Helper.chatColor("&aStones reloaded (Chunks: "+SpongyPS.getInstance().getProtectionManager().chunks()+")..."));
+				}
+				break;
 			case "info":
 				if(testPermission(src, "sps.command.info")){
 					if(player!=null){
@@ -96,7 +102,7 @@ public class SPSCommand implements CommandExecutor {
 						if(protection.isPresent()){
 							System.out.println(protection.get().toString());
 						}else{
-							src.sendMessage(Helper.chatColor("&c"+LangManager.translate("info-nostone")));	
+							src.sendMessage(LangManager.translate("info-nostone"));	
 						}
 					}else{
 						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));

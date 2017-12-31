@@ -1,6 +1,7 @@
 package mx.com.rodel.sps.db.common;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,6 +45,8 @@ public interface CommonDataSource {
 	abstract void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
 	
 	abstract Protection searchRegion(UUID world, int x, int y, int z);
+	
+	abstract List<Protection> searchProtections(World world);
 	
 	/**
 	 * Return the Sponge native SqlService

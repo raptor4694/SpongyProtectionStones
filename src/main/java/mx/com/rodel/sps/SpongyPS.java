@@ -25,6 +25,7 @@ import mx.com.rodel.sps.db.DatabaseManager;
 import mx.com.rodel.sps.db.common.MySQLAdapter;
 import mx.com.rodel.sps.limits.LimitsManager;
 import mx.com.rodel.sps.listener.ProtectionPlaceEvent;
+import mx.com.rodel.sps.listener.WorldListener;
 import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -143,5 +144,6 @@ public class SpongyPS {
 		
 		Sponge.getCommandManager().register(this, psCommand, "ps", "sps");
 		Sponge.getEventManager().registerListeners(this, new ProtectionPlaceEvent());
+		Sponge.getEventManager().registerListeners(this, new WorldListener());
 	}
 }

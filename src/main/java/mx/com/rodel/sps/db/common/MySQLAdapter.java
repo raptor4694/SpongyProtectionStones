@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -15,13 +14,11 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import mx.com.rodel.sps.protection.Protection;
-import mx.com.rodel.sps.utils.Helper;
 import mx.com.rodel.sps.utils.WorldNotFoundException;
 
 public class MySQLAdapter implements CommonDataSource{
@@ -84,7 +81,7 @@ public class MySQLAdapter implements CommonDataSource{
 	@Override
 	public Protection searchRegion(UUID world, int x, int y, int z) {
 		try (Connection conn = getDataSource().getConnection()){
-			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `world`=? and `minx`<? and `miny`<? and `minz`<? and `maxx`>? and `maxy`>? and `maxz`>?");
+			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `world`=? and `minx`<=? and `miny`<=? and `minz`<=? and `maxx`>=? and `maxy`>=? and `maxz`>=?");
 			int i = 1;
 			ps.setString(i, world.toString()); i++;
 			ps.setInt(i, x); i++;
@@ -95,7 +92,7 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.setInt(i, z); i++;
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
-				return createProtection(rs);
+				return protectionWrapper(rs);
 			}
 		} catch (SQLException | WorldNotFoundException e) {
 			e.printStackTrace();
@@ -103,7 +100,7 @@ public class MySQLAdapter implements CommonDataSource{
 		return null;
 	}
 	
-	public Protection createProtection(ResultSet rs) throws SQLException, WorldNotFoundException{
+	public Protection protectionWrapper(ResultSet rs) throws SQLException, WorldNotFoundException{
 		String worldUID = rs.getString("world");
 		World world = Sponge.getServer().getWorld(UUID.fromString(worldUID)).orElseThrow(()->new WorldNotFoundException(worldUID));
 		String flag = rs.getString("flags");
@@ -131,13 +128,30 @@ public class MySQLAdapter implements CommonDataSource{
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
 				return rs.getInt("count(*)");
-			}
+			} 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 	
+	@Override
+	public List<Protection> searchProtections(World world) {
+		List<Protection> protections = new ArrayList<>();
+		try (Connection conn = getDataSource().getConnection()){
+			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `world`=?");
+			ps.setString(1, world.getUniqueId().toString());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				protections.add(protectionWrapper(rs));
+			}
+			rs.close();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return protections;
+	}
 
 	@Override
 	public void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {

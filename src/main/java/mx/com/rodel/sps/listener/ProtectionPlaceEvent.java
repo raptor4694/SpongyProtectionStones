@@ -1,5 +1,7 @@
 package mx.com.rodel.sps.listener;
 
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -8,10 +10,14 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableMap;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.config.LangManager;
+import mx.com.rodel.sps.config.LocaleFormat;
+import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
@@ -23,22 +29,40 @@ public class ProtectionPlaceEvent {
 		if(oplayer.isPresent()){
 			Player player = oplayer.get();
 			
+			// Sneaking?
 			if(player.get(Keys.IS_SNEAKING).orElse(false)){
 				BlockSnapshot block = e.getTransactions().get(0).getFinal();
 				Optional<ProtectionStone> ostone = SpongyPS.getInstance().getProtectionManager().getStoneByBlock(block.getState().getType());
 				if(ostone.isPresent()){
-					// Protection placing code
+					// START Protection placing code
 					ProtectionStone stone = ostone.get();
-					System.out.println(stone.toString());
 					
 					ImmutableMap<ProtectionStone, Integer> limits = SpongyPS.getInstance().getLimitsManager().getLimits(player);
 					Integer limit = limits.get(stone);
 					if(limit==null || limit.intValue()<1){
-						System.out.println("No limits");
+						player.sendMessage(LangManager.translate("stone-nopermission"));
 					}else{
-						Vector3i[] nx = Helper.calculateCenter(stone.getRange()/2, block.getLocation().get());
-						ProtectionManager.createProtection(player, nx[0], nx[1], block.getLocation().get(), stone.getName());
+						Protection mock = new Protection(player.getUniqueId(), player.getWorld(), block.getPosition(), stone);
+						
+						System.out.println("CHUNKS "+mock.getParentChunks().size());
+						for(Vector2i chunk : mock.getParentChunks()){
+							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(chunk)){
+								System.out.println("PROTECTION "+protection);
+								if(protection.intersects(mock)){
+									player.sendMessage(LangManager.translate("stone-overlapping")); // Yep.. its overlapping
+									return;
+								}
+							}
+						}
+						
+						try {
+							SpongyPS.getInstance().getProtectionManager().saveProtection(mock);
+							player.sendMessage(LangManager.translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName())));
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
 					}
+					// END Protection placing code
 				}
 			}
 			

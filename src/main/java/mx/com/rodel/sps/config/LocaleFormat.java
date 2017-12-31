@@ -11,11 +11,21 @@ public class LocaleFormat {
 		this.text = text;
 	}
 	
+	/**
+	 * Add a replacer
+	 * 
+	 * @param key The sentence to search
+	 * @param replacement The new sentence
+	 * @return this class, just for chaining
+	 */
 	public LocaleFormat add(String key, String replacement){
 		replacer.put(key, replacement);
 		return this;
 	}
 	
+	/**
+	 * Return translated string
+	 */
 	@Override
 	public String toString() {
 		String tempText = text;

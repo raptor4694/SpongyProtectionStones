@@ -1,6 +1,7 @@
 package mx.com.rodel.sps.db;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -42,8 +43,8 @@ public class DatabaseManager implements CommonDataSource{
 	}
 
 	@Override
-	public void createProtection(UUID owner, Vector3i max, Vector3i min, Location<World> location, String protectionType) throws SQLException {
-		dataSource.createProtection(owner, max, min, location, protectionType);
+	public void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+		dataSource.createProtection(owner, min, max, location, protectionType);
 	}
 	
 	@Override
@@ -51,4 +52,8 @@ public class DatabaseManager implements CommonDataSource{
 		return dataSource.searchRegion(world, x, y, z);
 	}
 	
+	@Override
+	public List<Protection> searchProtections(World world) {
+		return dataSource.searchProtections(world);
+	}
 }
