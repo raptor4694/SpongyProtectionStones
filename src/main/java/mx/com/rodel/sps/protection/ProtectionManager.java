@@ -21,25 +21,22 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.config.ConfigurationManager;
+import mx.com.rodel.sps.config.IConfiguration;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
-public class ProtectionManager {
+public class ProtectionManager extends IConfiguration{
 	// It can be changed while players are placing stones
 	private ConcurrentMap<String, ProtectionStone> stoneTypes = Maps.newConcurrentMap();
 	
 	private HashMap<Vector2i, List<Protection>> protectionByChunk = Maps.newHashMap();
 	
-	
-	private SpongyPS pl;
-	
 	public ProtectionManager(SpongyPS pl) {
-		this.pl = pl;
+		super("stones.conf", pl);
 	}
 	
 	public void loadStones(){
 		stoneTypes.clear();
-		Map<Object, ? extends CommentedConfigurationNode> childs = ConfigurationManager.getNode("stones").getChildrenMap();
+		Map<Object, ? extends CommentedConfigurationNode> childs = getNode("stones").getChildrenMap();
 
 		for(Entry<Object, ? extends CommentedConfigurationNode> node : childs.entrySet()){
 			try {

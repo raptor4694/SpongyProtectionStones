@@ -1,5 +1,6 @@
 package mx.com.rodel.sps.command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.limits.Group;
 import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.protection.ProtectionManager;
@@ -34,7 +34,7 @@ public class SPSCommand implements CommandExecutor {
 		this.pl = pl;
 		commandChoices = Arrays.asList(
 				// Command Choices
-				new String[] {"groups", "stones", "limits", "reload", "info", "sreload"}
+				new String[] {"groups", "stones", "limits", "reload", "info", "sreload", "visualize"}
 			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 	}
 	
@@ -100,9 +100,25 @@ public class SPSCommand implements CommandExecutor {
 					if(player!=null){
 						Optional<Protection> protection = ProtectionManager.isRegion(player.getLocation());
 						if(protection.isPresent()){
-							System.out.println(protection.get().toString());
+							List<String> info = new ArrayList<>();
+							
+							info.add("");
 						}else{
-							src.sendMessage(LangManager.translate("info-nostone"));	
+							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone"));	
+						}
+					}else{
+						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
+					}
+				}
+				break;
+			case "visualize":
+				if(testPermission(src, "sps.command.visualize")){
+					if(player!=null){
+						Optional<Protection> protection = ProtectionManager.isRegion(player.getLocation());
+						if(protection.isPresent()){
+							protection.get().visualize(player);
+						}else{
+							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone"));	
 						}
 					}else{
 						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
@@ -120,7 +136,7 @@ public class SPSCommand implements CommandExecutor {
 			return true;
 		}
 		
-		src.sendMessage(LangManager.translate("no-permission"));
+		src.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-permission"));
 		return false;
 	}
 }

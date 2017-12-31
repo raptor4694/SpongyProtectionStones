@@ -92,9 +92,33 @@ public class SpongyPS {
 	}
 	
 	public void reload(CommandSource cause){
+		// Configuration
+		if(configManager==null){
+			configManager = new ConfigurationManager(this);
+		}
 		configManager.load();
+		
+		// Localization
+		if(langManager==null){
+			langManager = new LangManager(this);
+		}
 		langManager.load();
-		cause.sendMessage(Helper.chatColor("&aSPS Reloaded"));
+		
+		// Stones
+		if(protectionManager==null){
+			protectionManager = new ProtectionManager(this);
+		}
+		protectionManager.load();
+		protectionManager.loadStones();
+
+		// Limits
+		if(limitsManager==null){
+			limitsManager = new LimitsManager(this);
+		}
+		limitsManager.load();
+		limitsManager.loadLimits();
+		
+		cause.sendMessage(Helper.chatColor("&aSPS Configurations Loaded"));
 	}
 	
 	@Listener
@@ -103,17 +127,7 @@ public class SpongyPS {
 		
 		log.info("Initializing Spongy Protection Stones!");
 		
-		configManager = new ConfigurationManager(this);
-		configManager.load();
-		
-		langManager = new LangManager(this);
-		langManager.load();
-		
-		protectionManager = new ProtectionManager(this);
-		protectionManager.loadStones();
-
-		limitsManager = new LimitsManager();
-		limitsManager.loadLimits();
+		reload(Sponge.getServer().getConsole());
 
 		// Init DB
 		try {

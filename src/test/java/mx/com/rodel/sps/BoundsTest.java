@@ -1,12 +1,13 @@
 package mx.com.rodel.sps;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.flowpowered.math.vector.Vector3d;
 
 import mx.com.rodel.sps.utils.Helper;
-
-import static org.junit.Assert.*;
 
 public class BoundsTest {
 	@Test

@@ -1,7 +1,6 @@
 package mx.com.rodel.sps.listener;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -11,14 +10,11 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import com.flowpowered.math.vector.Vector2i;
-import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableMap;
 
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.protection.Protection;
-import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -40,16 +36,14 @@ public class ProtectionPlaceEvent {
 					ImmutableMap<ProtectionStone, Integer> limits = SpongyPS.getInstance().getLimitsManager().getLimits(player);
 					Integer limit = limits.get(stone);
 					if(limit==null || limit.intValue()<1){
-						player.sendMessage(LangManager.translate("stone-nopermission"));
+						player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-nopermission"));
 					}else{
 						Protection mock = new Protection(player.getUniqueId(), player.getWorld(), block.getPosition(), stone);
 						
-						System.out.println("CHUNKS "+mock.getParentChunks().size());
 						for(Vector2i chunk : mock.getParentChunks()){
 							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(chunk)){
-								System.out.println("PROTECTION "+protection);
 								if(protection.intersects(mock)){
-									player.sendMessage(LangManager.translate("stone-overlapping")); // Yep.. its overlapping
+									player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-overlapping")); // Yep.. its overlapping
 									return;
 								}
 							}
@@ -57,7 +51,7 @@ public class ProtectionPlaceEvent {
 						
 						try {
 							SpongyPS.getInstance().getProtectionManager().saveProtection(mock);
-							player.sendMessage(LangManager.translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName())));
+							player.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName())));
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}

@@ -110,6 +110,7 @@ public class MySQLAdapter implements CommonDataSource{
 		List<UUID> members = member==null ? new ArrayList<>() : Arrays.asList(member.split(";")).stream().map(UUID::fromString).collect(Collectors.toList());
 		
 		return new Protection(
+				rs.getInt("id"),
 				world, 
 				UUID.fromString(rs.getString("owner")), 
 				new Vector3i(rs.getInt("centerx"), rs.getInt("centery"), rs.getInt("centerz")), 
@@ -142,7 +143,7 @@ public class MySQLAdapter implements CommonDataSource{
 			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `world`=?");
 			ps.setString(1, world.getUniqueId().toString());
 			ResultSet rs = ps.executeQuery();
-			if(rs.next()){
+			while(rs.next()){
 				protections.add(protectionWrapper(rs));
 			}
 			rs.close();

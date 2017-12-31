@@ -16,17 +16,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.config.ConfigurationManager;
+import mx.com.rodel.sps.config.IConfiguration;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
-public class LimitsManager {
-	
+public class LimitsManager extends IConfiguration{
 	private ConcurrentMap<String, Group> groups = Maps.newConcurrentMap();
+
+	public LimitsManager(SpongyPS pl) {
+		super("limits.conf", pl);
+	}
 
 	public void loadLimits(){
 		groups.clear();
-		Map<Object, ? extends CommentedConfigurationNode> childs = ConfigurationManager.getNode("limits").getChildrenMap();
+		Map<Object, ? extends CommentedConfigurationNode> childs = getNode("limits").getChildrenMap();
 		
 		for(Entry<Object, ? extends CommentedConfigurationNode> child : childs.entrySet()){
 			Group group = new Group(child.getKey().toString(), child.getValue().getNode("priority").getInt(0));
@@ -84,8 +87,6 @@ public class LimitsManager {
 		// Order in desc by priority, the highest will be in the index 0
 		results.sort((Group o1, Group o2)->Integer.compare(o2.getPriority(), o1.getPriority()));
 
-		results.forEach(System.out::println);
-		
 		return Optional.of(results.get(0));
 	}
 	

@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -13,7 +17,9 @@ import org.spongepowered.api.world.World;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
+import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.utils.Helper;
 
 public class Protection {
@@ -40,7 +46,8 @@ public class Protection {
 		max = vertices[1];
 	}
 	
-	public Protection(World world, UUID owner, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+	public Protection(int id, World world, UUID owner, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+		this.id = id;
 		this.world = world;
 		this.owner = owner;
 		this.center = center;
@@ -131,10 +138,45 @@ public class Protection {
 	 * @param player
 	 */
 	public void visualize(Player player){
+		try {
+			for(Vector3i vector : getLineBounds()){
+				player.sendBlockChange(vector, BlockState.builder().blockType(Sponge.getRegistry().getType(BlockType.class, SpongyPS.getInstance().getConfigManger().getNode("config", "visualize-block").getString()).orElseThrow(()->new Exception("Invalid visualize-block id!"))).build());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Sponge.getScheduler().createTaskBuilder().execute(()->resetVisualize(player)).delay(SpongyPS.getInstance().getConfigManger().getNode("config", "visualize-time").getLong(), TimeUnit.SECONDS).submit(SpongyPS.getInstance());
 	}
 	
 	public void resetVisualize(Player player){
+		getLineBounds().forEach(vector -> {
+			player.resetBlockChange(vector);
+		});
+	}
+	
+	public ImmutableList<Vector3i> getLineBounds(){
+		List<Vector3i> bounds = new ArrayList<>();
 		
+		for (int x = min.getX(); x <= max.getX(); x++) {
+			for (int y = min.getY(); y <= max.getY(); y++) {
+				for (int z = min.getZ(); z <= max.getZ(); z++) {
+					// Upper Lower
+					if(y==min.getY() || y==max.getY()){
+						if((x==min.getX() || x==max.getX()) || (z==min.getZ() || z==max.getZ())){
+							bounds.add(new Vector3i(x, y, z));
+						}
+						// Sides
+					}else{
+						if((x==max.getX() && z==max.getZ()) || (x==min.getX() && z==max.getZ()) || (x==min.getX() && z==min.getZ()) || (x==max.getX() && z==min.getZ())){
+							bounds.add(new Vector3i(x, y, z));
+						}
+					}
+				}
+			}
+		}
+		
+		return ImmutableList.copyOf(bounds);
 	}
 	
 	public Protection setOwner(UUID owner){
