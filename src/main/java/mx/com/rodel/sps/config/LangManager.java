@@ -25,6 +25,7 @@ public class LangManager extends IConfiguration{
 	}
 	
 	public Text translate(LocaleFormat format){
+		format.text = localize(format.text); // Localize the text before use the replacers
 		return Helper.chatColor(getHeader()+format.toString());
 	}
 	
