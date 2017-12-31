@@ -51,6 +51,7 @@ public class ProtectionPlaceEvent {
 						
 						try {
 							SpongyPS.getInstance().getProtectionManager().saveProtection(mock);
+							mock.visualize(player);
 							player.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName())));
 						} catch (SQLException e1) {
 							e1.printStackTrace();
