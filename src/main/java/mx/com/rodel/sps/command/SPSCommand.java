@@ -74,7 +74,7 @@ public class SPSCommand implements CommandExecutor {
 			case "limits":
 				if(testPermission(src, "sps.command.limits")){
 					if(player!=null){
-						pagination.title(Text.of("Limits"));
+						pagination.title(pl.getLangManager().translate("limits", false));
 						
 						Map<ProtectionStone, Integer> limits = pl.getLimitsManager().getLimits(player);
 						pagination.contents(limits.entrySet().stream().map(entry -> Helper.chatColor("&6"+entry.getKey().getDisplayName()+": &7"+entry.getValue())).collect(Collectors.toList()));
@@ -105,19 +105,19 @@ public class SPSCommand implements CommandExecutor {
 							Protection protection = oprotection.get();
 							
 							if(SpongyPS.getInstance().getConfigManger().getNode("info", "show-id").getBoolean()){
-								info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-id").add("{id}", String.valueOf(protection.getID()))));
+								info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-id").add("{id}", String.valueOf(protection.getID())), false));
 							}
 							
-							info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-owner").add("{owner}", protection.getOwnerName())));
+							info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-owner").add("{owner}", protection.getOwnerName()), false));
 							info.add(SpongyPS.getInstance().getLangManager().translate(
 									new LocaleFormat("info-center")
 									.add("{x}", String.valueOf(protection.getCenter().getBlockX()))
 									.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
-									.add("{z}", String.valueOf(protection.getCenter().getBlockZ()))));
+									.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
 							
-							PaginationList.builder().contents(info);
+							PaginationList.builder().contents(info).title(pl.getLangManager().translate("info-title", false)).sendTo(src);
 						}else{
-							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone"));	
+							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));	
 						}
 					}else{
 						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
@@ -131,7 +131,7 @@ public class SPSCommand implements CommandExecutor {
 						if(protection.isPresent()){
 							protection.get().visualize(player);
 						}else{
-							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone"));	
+							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", true));	
 						}
 					}else{
 						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
@@ -149,7 +149,7 @@ public class SPSCommand implements CommandExecutor {
 			return true;
 		}
 		
-		src.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-permission"));
+		src.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-permission", true));
 		return false;
 	}
 }

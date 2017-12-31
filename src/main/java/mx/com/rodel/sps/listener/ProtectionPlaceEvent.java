@@ -36,14 +36,14 @@ public class ProtectionPlaceEvent {
 					ImmutableMap<ProtectionStone, Integer> limits = SpongyPS.getInstance().getLimitsManager().getLimits(player);
 					Integer limit = limits.get(stone);
 					if(limit==null || limit.intValue()<1){
-						player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-nopermission"));
+						player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-nopermission", true));
 					}else{
 						Protection mock = new Protection(player.getUniqueId(), player.getName(), player.getWorld(), block.getPosition(), stone);
 						
 						for(Vector2i chunk : mock.getParentChunks()){
 							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(chunk)){
 								if(protection.intersects(mock)){
-									player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-overlapping")); // Yep.. its overlapping
+									player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-overlapping", true)); // Yep.. its overlapping
 									return;
 								}
 							}
@@ -52,7 +52,7 @@ public class ProtectionPlaceEvent {
 						try {
 							SpongyPS.getInstance().getProtectionManager().saveProtection(mock);
 							mock.visualize(player);
-							player.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName())));
+							player.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("stone-place").add("{stone}", stone.getDisplayName()), true));
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}

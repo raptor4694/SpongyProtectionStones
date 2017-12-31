@@ -20,13 +20,13 @@ public class LangManager extends IConfiguration{
 		return format.toString();
 	}
 	
-	public Text translate(String key){
-		return Helper.chatColor(getHeader()+localize(key));
+	public Text translate(String key, boolean header){
+		return Helper.chatColor((header ? getHeader() : "")+localize(key));
 	}
 	
-	public Text translate(LocaleFormat format){
+	public Text translate(LocaleFormat format, boolean header){
 		format.text = localize(format.text); // Localize the text before use the replacers
-		return Helper.chatColor(getHeader()+format.toString());
+		return Helper.chatColor((header ? getHeader() : "")+format.toString());
 	}
 	
 	public String getHeader(){
