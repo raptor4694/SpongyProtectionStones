@@ -38,7 +38,7 @@ public class ProtectionPlaceEvent {
 					if(limit==null || limit.intValue()<1){
 						player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-nopermission"));
 					}else{
-						Protection mock = new Protection(player.getUniqueId(), player.getWorld(), block.getPosition(), stone);
+						Protection mock = new Protection(player.getUniqueId(), player.getName(), player.getWorld(), block.getPosition(), stone);
 						
 						for(Vector2i chunk : mock.getParentChunks()){
 							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(chunk)){

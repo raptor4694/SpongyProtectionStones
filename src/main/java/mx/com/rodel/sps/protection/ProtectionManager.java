@@ -80,7 +80,7 @@ public class ProtectionManager extends IConfiguration{
 	
 	public static boolean createProtection(Player owner, Vector3i min, Vector3i max, Location<World> location, String protectionType){
 		try {
-			SpongyPS.getInstance().getDatabaseManger().createProtection(owner.getUniqueId(), min, max, location, protectionType);
+			SpongyPS.getInstance().getDatabaseManger().createProtection(owner.getUniqueId(), owner.getName(), min, max, location, protectionType);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -105,7 +105,7 @@ public class ProtectionManager extends IConfiguration{
 	public void saveProtection(Protection protection) throws SQLException{
 		 putProtection(protection);
 		 SpongyPS.getInstance().getDatabaseManger().createProtection(
-				 protection.getOwner(), protection.getMin(), protection.getMax(), protection.getCenter(), protection.getType().getName());
+				 protection.getOwner(), protection.getOwnerName(), protection.getMin(), protection.getMax(), protection.getCenter(), protection.getType().getName());
 	}
 	
 	private void putProtection(Protection protection){

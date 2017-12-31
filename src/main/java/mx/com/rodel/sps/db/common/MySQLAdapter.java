@@ -58,6 +58,7 @@ public class MySQLAdapter implements CommonDataSource{
 					+ "("
 					+ "`id` int(10) unsigned not null auto_increment,"
 					+ "`owner` varchar(255) not null,"
+					+ "`owner_name` varchar(60) not null,"
 					+ "`minx` bigint not null,"
 					+ "`miny` tinyint unsigned not null,"
 					+ "`minz` bigint not null,"
@@ -112,7 +113,8 @@ public class MySQLAdapter implements CommonDataSource{
 		return new Protection(
 				rs.getInt("id"),
 				world, 
-				UUID.fromString(rs.getString("owner")), 
+				UUID.fromString(rs.getString("owner")),
+				rs.getString("owner_name"),
 				new Vector3i(rs.getInt("centerx"), rs.getInt("centery"), rs.getInt("centerz")), 
 				new Vector3i(rs.getInt("minx"), rs.getInt("miny"), rs.getInt("minz")), 
 				new Vector3i(rs.getInt("maxx"), rs.getInt("maxy"), rs.getInt("maxz")), 
@@ -155,14 +157,15 @@ public class MySQLAdapter implements CommonDataSource{
 	}
 
 	@Override
-	public void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
 		try (Connection conn = getDataSource().getConnection()) {
 			String query = "insert into "+protection_table+" "
-					+ "(`owner`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `centerx`, `centery`, `centerz`, `world`, `type`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					+ "(`owner`, `owner_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `centerx`, `centery`, `centerz`, `world`, `type`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			int i = 1;
 			//Owner
 			ps.setString(i, owner.toString()); i++;
+			ps.setString(i, owner_name); i++;
 			//Min
 			ps.setInt(i, min.getX()); i++;
 			ps.setInt(i, min.getY()); i++;

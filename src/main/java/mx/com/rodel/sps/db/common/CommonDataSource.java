@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.sql.SqlService;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -42,7 +43,7 @@ public interface CommonDataSource {
 	
 	abstract int countProtectionsOfType(UUID uuid, String name);
 	
-	abstract void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
+	abstract void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
 	
 	abstract Protection searchRegion(UUID world, int x, int y, int z);
 	

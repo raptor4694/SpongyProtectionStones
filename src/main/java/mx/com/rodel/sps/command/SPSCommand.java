@@ -18,6 +18,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.limits.Group;
 import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.protection.ProtectionManager;
@@ -98,11 +99,23 @@ public class SPSCommand implements CommandExecutor {
 			case "info":
 				if(testPermission(src, "sps.command.info")){
 					if(player!=null){
-						Optional<Protection> protection = ProtectionManager.isRegion(player.getLocation());
-						if(protection.isPresent()){
-							List<String> info = new ArrayList<>();
+						Optional<Protection> oprotection = ProtectionManager.isRegion(player.getLocation());
+						if(oprotection.isPresent()){
+							List<Text> info = new ArrayList<>();
+							Protection protection = oprotection.get();
 							
-							info.add("");
+							if(SpongyPS.getInstance().getConfigManger().getNode("info", "show-id").getBoolean()){
+								info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-id").add("{id}", String.valueOf(protection.getID()))));
+							}
+							
+							info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-owner").add("{owner}", protection.getOwnerName())));
+							info.add(SpongyPS.getInstance().getLangManager().translate(
+									new LocaleFormat("info-center")
+									.add("{x}", String.valueOf(protection.getCenter().getBlockX()))
+									.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
+									.add("{z}", String.valueOf(protection.getCenter().getBlockZ()))));
+							
+							PaginationList.builder().contents(info);
 						}else{
 							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone"));	
 						}

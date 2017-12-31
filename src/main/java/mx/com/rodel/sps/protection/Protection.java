@@ -25,6 +25,7 @@ import mx.com.rodel.sps.utils.Helper;
 public class Protection {
 	private int id;
 	private UUID owner;
+	private String owner_name;
 	private List<UUID> members = new ArrayList<>();
 	private List<String> flags = new ArrayList<>();
 	private World world;
@@ -35,8 +36,13 @@ public class Protection {
 		this.id = id;
 	}
 	
-	public Protection(UUID owner, World world, Vector3i center, ProtectionStone type) {
+	public Protection(Player owner, World world, Vector3i center, ProtectionStone type) {
+		this(owner.getUniqueId(), owner.getName(), world, center, type);
+	}
+	
+	public Protection(UUID owner, String owner_name, World world, Vector3i center, ProtectionStone type) {
 		this.owner = owner;
+		this.owner_name = owner_name;
 		this.center = center;
 		this.world = world;
 		this.type = type;
@@ -46,15 +52,21 @@ public class Protection {
 		max = vertices[1];
 	}
 	
-	public Protection(int id, World world, UUID owner, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
 		this.id = id;
 		this.world = world;
 		this.owner = owner;
+		this.owner_name = owner_name;
 		this.center = center;
 		this.min = min;
 		this.max = max;
 		this.members = members;
 		this.flags = flags;
+		
+	}
+	
+	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags);
 	}
 	
 	public HashSet<Vector2i> getParentChunks(){
@@ -179,13 +191,18 @@ public class Protection {
 		return ImmutableList.copyOf(bounds);
 	}
 	
-	public Protection setOwner(UUID owner){
+	public Protection setOwner(UUID owner, String owner_name){
 		this.owner = owner;
+		this.owner_name = owner_name;
 		return this;
 	}
 	
 	public UUID getOwner(){
 		return owner;
+	}
+	
+	public String getOwnerName(){
+		return owner_name;
 	}
 	
 	public List<UUID> getMembers(){

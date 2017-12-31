@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -43,8 +44,8 @@ public class DatabaseManager implements CommonDataSource{
 	}
 
 	@Override
-	public void createProtection(UUID owner, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
-		dataSource.createProtection(owner, min, max, location, protectionType);
+	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+		dataSource.createProtection(owner, owner_name, min, max, location, protectionType);
 	}
 	
 	@Override
