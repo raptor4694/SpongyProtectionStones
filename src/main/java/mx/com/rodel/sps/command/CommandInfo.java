@@ -36,6 +36,8 @@ public class CommandInfo implements ICommand{
 						.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
 				
 				PaginationList.builder().contents(info).title(SpongyPS.getInstance().getLangManager().translate("info-title", false)).sendTo(source);
+			}else{
+				source.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));
 			}
 		}
 		return true;

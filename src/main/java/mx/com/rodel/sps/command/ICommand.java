@@ -24,7 +24,7 @@ public interface ICommand {
 	default String getHelp(){
 		String usage = getUsage();
 		String description = getDescription();
-		return (usage==null ? "" : " &a"+usage+" ")+(description==null ? "" : "&7("+description+")");
+		return " "+(usage==null ? "" : " &a"+usage+" ")+(description==null ? "" : "&7("+description+")");
 	}
 	
 	default boolean testPermission(CommandSource player, boolean message){

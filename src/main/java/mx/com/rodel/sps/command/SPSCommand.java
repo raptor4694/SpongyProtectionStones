@@ -14,6 +14,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import mx.com.rodel.sps.SpongyPS;
@@ -35,6 +36,9 @@ public class SPSCommand implements CommandCallable {
 //			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 		
 		commands.put("info", new CommandInfo());
+		commands.put("reload", new CommandReload());
+		commands.put("stones", new CommandReload());
+		commands.put("groups", new CommandReload());
 	}
 	
 	@Override
@@ -45,18 +49,12 @@ public class SPSCommand implements CommandCallable {
 			ICommand command = commands.get(args[0]);
 			
 			if(command!=null){
-				String[] mArgs = new String[Math.max(args.length-1, 0)];
-				
-				for (int i = 0; i < args.length; i++) {
-					if(i==0){
-						continue;
-					}
-					mArgs[i] = args[i];
-				}
+				List<String> mArgs = Lists.newArrayList(args);
+				mArgs.remove(0);
 				
 				if(command.testPermission(source, true)){
-					if(!command.onCommand(source, mArgs)){
-						source.sendMessage(Helper.chatColor("/ps "+command.getName()+command.getHelp()));
+					if(!command.onCommand(source, mArgs.toArray(new String[] {}))){
+						source.sendMessage(Helper.chatColor("&a/ps "+command.getName()+command.getHelp()));
 					}
 					return CommandResult.success();
 				}
@@ -73,7 +71,7 @@ public class SPSCommand implements CommandCallable {
 	public void help(CommandSource source){
 		for(Entry<String, ICommand> command : commands.entrySet()){
 			if(command.getValue().testPermission(source, false)){
-				source.sendMessage(Helper.chatColor("/ps "+command.getValue().getName()+command.getValue().getHelp()));
+				source.sendMessage(Helper.chatColor("&a/ps "+command.getValue().getName()+command.getValue().getHelp()));
 			}
 		}
 	}

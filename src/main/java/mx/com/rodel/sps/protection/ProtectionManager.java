@@ -136,11 +136,13 @@ public class ProtectionManager extends IConfiguration{
 		return protectionByChunk.getOrDefault(chunk, new ArrayList<>());
 	}
 
-	public void reload() {
+	public int reload() {
 		protectionByChunk.clear();
+		int count = 0;
 		for(World world : Sponge.getServer().getWorlds()){
-			loadProtections(world);
+			count += loadProtections(world);
 		}
+		return count;
 	}
 
 	public int chunks() {
