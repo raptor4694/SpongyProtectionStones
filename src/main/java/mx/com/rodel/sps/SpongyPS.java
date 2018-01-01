@@ -5,8 +5,6 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
@@ -14,7 +12,6 @@ import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 
 import com.google.inject.Inject;
 
@@ -149,15 +146,8 @@ public class SpongyPS {
 		
 		SPSCommand command = new SPSCommand(this);
 		
-		CommandSpec psCommand = CommandSpec.builder()
-				.description(Text.of("Main SPS command"))
-				.executor(command)
-				.arguments(
-							GenericArguments.choices(Text.of("subcommand"), command.commandChoices)
-						)
-				.build();
+		Sponge.getCommandManager().register(this, command, "ps", "sps");
 		
-		Sponge.getCommandManager().register(this, psCommand, "ps", "sps");
 		Sponge.getEventManager().registerListeners(this, new ProtectionPlaceEvent());
 		Sponge.getEventManager().registerListeners(this, new WorldListener());
 		Sponge.getEventManager().registerListeners(this, new PlayerListener());

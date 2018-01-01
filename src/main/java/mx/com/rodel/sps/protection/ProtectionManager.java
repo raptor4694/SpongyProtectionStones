@@ -88,8 +88,24 @@ public class ProtectionManager extends IConfiguration{
 		return false;
 	}
 	
-	public static Optional<Protection> isRegion(Location<World> world){
-		return Optional.ofNullable(SpongyPS.getInstance().getDatabaseManger().searchRegion(world.getExtent().getUniqueId(), world.getBlockX(), world.getBlockY(), world.getBlockZ()));
+	public Optional<Protection> isRegion(Location<World> location){
+		// First check chunk protections in cache
+		int chunkX = location.getBlockX() >> 4;
+		int chunkZ = location.getBlockZ() >> 4;
+		List<Protection> protections = protectionByChunk.get(new Vector2i(chunkX, chunkZ));
+		
+		if(protections==null){
+			return Optional.empty();
+		}
+		
+		for(Protection protection : protections){
+			// Then check if any the of protections envelops the location
+			if(protection.envelops(location.getBlockPosition())){
+				return Optional.of(protection);
+			}
+		}
+		
+		return Optional.empty();
 	}
 
 	public int loadProtections(World world) {
