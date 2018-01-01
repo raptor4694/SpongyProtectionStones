@@ -32,6 +32,7 @@ public class SPSCommand implements CommandCallable {
 		// User commands
 		commands.put("info", new CommandInfo());
 		commands.put("visualize", new CommandVisualize());
+		commands.put("add", new CommandAdd());
 		
 		// Admin commands
 		commands.put("reload", new CommandReload());

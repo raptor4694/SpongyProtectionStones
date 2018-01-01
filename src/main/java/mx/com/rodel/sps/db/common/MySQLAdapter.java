@@ -6,9 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -20,6 +21,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import mx.com.rodel.sps.protection.Protection;
+import mx.com.rodel.sps.utils.Helper;
 import mx.com.rodel.sps.utils.WorldNotFoundException;
 
 public class MySQLAdapter implements CommonDataSource{
@@ -113,7 +115,14 @@ public class MySQLAdapter implements CommonDataSource{
 		List<String> flags = flag==null ? new ArrayList<>() : Arrays.asList(flag.split(";"));
 		
 		String member = rs.getString("members");
-		List<UUID> members = member==null ? new ArrayList<>() : Arrays.asList(member.split(";")).stream().map(UUID::fromString).collect(Collectors.toList());
+		Map<UUID, String> members = new HashMap<>();
+		if(member!=null){ // Idk, sonarlint told me...
+			String[] entries = member.split(";");
+			for(String entry : entries){
+				String[] kv = entry.split("=");
+				members.put(UUID.fromString(kv[0]), kv[1]);
+			}
+		}
 		
 		return new Protection(
 				rs.getInt("id"),
@@ -180,6 +189,19 @@ public class MySQLAdapter implements CommonDataSource{
 	}
 	
 	@Override
+	public void updateMembers(int id, Map<UUID, String> members) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update "+protection_table+" set `members`=? where `id`=?");
+			ps.setString(1, Helper.serializeMembers(members));
+			ps.setInt(2, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
 		try (Connection conn = getDataSource().getConnection()) {
 			String query = "insert into "+protection_table+" "
@@ -207,6 +229,27 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.setString(i, protectionType); i++;
 			ps.executeUpdate();
 			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public Protection searchRegion(int id) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("select * from "+protection_table+" where `id`=?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			Protection protection = null;
+			if(rs.next()){
+				protection = protectionWrapper(rs);
+			}
+			rs.close();
+			ps.close();
+			return protection;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

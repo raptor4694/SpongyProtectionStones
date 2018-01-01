@@ -2,8 +2,10 @@ package mx.com.rodel.sps.protection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +18,7 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
@@ -26,7 +29,7 @@ public class Protection {
 	private int id;
 	private UUID owner;
 	private String owner_name;
-	private List<UUID> members = new ArrayList<>();
+	private Map<UUID, String> members = new HashMap<>();
 	private List<String> flags = new ArrayList<>();
 	private World world;
 	private Vector3i center, min, max;
@@ -52,7 +55,7 @@ public class Protection {
 		max = vertices[1];
 	}
 	
-	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, List<String> flags) {
 		this.id = id;
 		this.world = world;
 		this.owner = owner;
@@ -65,7 +68,7 @@ public class Protection {
 		
 	}
 	
-	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, List<UUID> members, List<String> flags) {
+	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, List<String> flags) {
 		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags);
 	}
 	
@@ -135,7 +138,7 @@ public class Protection {
 		return Objects.toStringHelper(this)
 				.add("id", id)
 				.add("owner", owner)
-				.add("members", Arrays.deepToString(members.toArray(new UUID[] {})))
+				.add("members", Joiner.on(";").withKeyValueSeparator("=").join(members))
 				.add("flags", Arrays.deepToString(flags.toArray(new String[] {})))
 				.add("world", world)
 				.add("center", center)
@@ -205,8 +208,20 @@ public class Protection {
 		return owner_name;
 	}
 	
-	public List<UUID> getMembers(){
+	public Map<UUID, String> getMembers(){
 		return members;
+	}
+	
+	public void addMember(UUID member, String memberName){
+		// @Important
+		// Its needed just to do it in this class, cause when we load the protections
+		// we create a new protection and then place it on the chunks
+		// we are not cloning or making more protections, just using the same copy all the time
+		// then when i update the members variable, this updates in all chunks on the "protectionsByChunk" in ProtectionManager
+		// it took me a lot of time to think about it, but after test it works perfectly ;)
+		
+		members.put(member, memberName);
+		SpongyPS.getInstance().getDatabaseManger().updateMembers(id, members);
 	}
 	
 	public int getID(){
@@ -227,5 +242,18 @@ public class Protection {
 
 	public ProtectionStone getType() {
 		return type;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Protection && ((Protection) obj).id == id){
+			return true;
+		}
+		return false;
 	}
 }

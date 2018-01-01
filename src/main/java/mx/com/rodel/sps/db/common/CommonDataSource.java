@@ -2,6 +2,7 @@ package mx.com.rodel.sps.db.common;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,6 +51,10 @@ public interface CommonDataSource {
 	abstract List<Protection> searchProtections(World world);
 	
 	abstract void updatePlayerName(Player player);
+	
+	abstract void updateMembers(int id, Map<UUID, String> members);
+	
+	abstract Protection searchRegion(int id);
 	
 	/**
 	 * Return the Sponge native SqlService

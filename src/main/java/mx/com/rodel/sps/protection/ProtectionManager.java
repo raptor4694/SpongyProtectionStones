@@ -28,7 +28,7 @@ public class ProtectionManager extends IConfiguration{
 	// It can be changed while players are placing stones
 	private ConcurrentMap<String, ProtectionStone> stoneTypes = Maps.newConcurrentMap();
 	
-	private HashMap<Vector2i, List<Protection>> protectionByChunk = Maps.newHashMap();
+	private ConcurrentMap<Vector2i, List<Protection>> protectionByChunk = Maps.newConcurrentMap();
 	
 	public ProtectionManager(SpongyPS pl) {
 		super("stones.conf", pl);

@@ -2,6 +2,7 @@ package mx.com.rodel.sps.db;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -61,5 +62,15 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public void updatePlayerName(Player player) {
 		dataSource.updatePlayerName(player);
+	}
+	
+	@Override
+	public void updateMembers(int id, Map<UUID, String> members) {
+		dataSource.updateMembers(id, members);
+	}
+	
+	@Override
+	public Protection searchRegion(int id) {
+		return dataSource.searchRegion(id);
 	}
 }

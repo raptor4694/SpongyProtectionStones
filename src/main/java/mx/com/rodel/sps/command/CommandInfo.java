@@ -34,6 +34,7 @@ public class CommandInfo implements ICommand{
 						.add("{x}", String.valueOf(protection.getCenter().getBlockX()))
 						.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
 						.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
+				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-members").add("{members}", String.join(", ", protection.getMembers().values())), false));
 				
 				PaginationList.builder().contents(info).title(SpongyPS.getInstance().getLangManager().translate("info-title", false)).sendTo(source);
 			}else{

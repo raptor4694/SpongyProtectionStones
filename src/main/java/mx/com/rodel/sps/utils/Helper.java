@@ -1,7 +1,10 @@
 package mx.com.rodel.sps.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
@@ -11,6 +14,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Joiner;
 
 public class Helper {
 	public static boolean isInside(int x1, int y1, int z1, int x2, int y2, int z2, int x, int y, int z){
@@ -45,6 +49,22 @@ public class Helper {
 				return old;
 			}
 		};
+	}
+	
+	public static String serializeMembers(Map<UUID, String> serialize){
+		return Joiner.on(";").withKeyValueSeparator("=").join(serialize);
+	}
+	
+	public static Map<UUID, String> deserializeMembers(String deserialize){
+		Map<UUID, String> members = new HashMap<UUID, String>();
+		
+		String[] entries = deserialize.split(";");
+		for(String entry : entries){
+			String[] vk = entry.split(",");
+			members.put(UUID.fromString(vk[0]), vk[1]);
+		}
+		
+		return members;
 	}
 
 	/**
