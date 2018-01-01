@@ -26,14 +26,8 @@ public class SPSCommand implements CommandCallable {
 	
 	private Map<String, ICommand> commands = Maps.newHashMap();
 	
-//	public Map<String, Object> commandChoices;
-	
 	public SPSCommand(SpongyPS pl) {
 		this.pl = pl;
-//		commandChoices = Arrays.asList(
-//				// Command Choices
-//				new String[] {"groups", "stones", "limits", "reload", "info", "sreload", "visualize"}
-//			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 		
 		// User commands
 		commands.put("info", new CommandInfo());

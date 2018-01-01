@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -94,9 +93,13 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.setInt(i, y); i++;
 			ps.setInt(i, z); i++;
 			ResultSet rs = ps.executeQuery();
+			Protection p = null;
 			if(rs.next()){
-				return protectionWrapper(rs);
+				p = protectionWrapper(rs);
 			}
+			rs.close();
+			ps.close();
+			return p;
 		} catch (SQLException | WorldNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -131,9 +134,13 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.setString(1, uuid.toString());
 			ps.setString(2, name);
 			ResultSet rs = ps.executeQuery();
+			int c = 0;
 			if(rs.next()){
-				return rs.getInt("count(*)");
+				c = rs.getInt("count(*)");
 			} 
+			rs.close();
+			ps.close();
+			return c;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -166,6 +173,7 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.setString(2, player.getUniqueId().toString());
 			ps.setString(3, player.getName());
 			ps.executeUpdate();
+			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -198,6 +206,7 @@ public class MySQLAdapter implements CommonDataSource{
 			//Type
 			ps.setString(i, protectionType); i++;
 			ps.executeUpdate();
+			ps.close();
 		}
 	}
 }
