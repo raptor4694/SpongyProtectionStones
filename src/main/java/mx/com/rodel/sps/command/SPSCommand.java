@@ -35,10 +35,14 @@ public class SPSCommand implements CommandCallable {
 //				new String[] {"groups", "stones", "limits", "reload", "info", "sreload", "visualize"}
 //			).stream().collect(Collectors.toMap(choice->choice, Function.identity()));
 		
+		// User commands
 		commands.put("info", new CommandInfo());
+		commands.put("visualize", new CommandVisualize());
+		
+		// Admin commands
 		commands.put("reload", new CommandReload());
-		commands.put("stones", new CommandReload());
-		commands.put("groups", new CommandReload());
+		commands.put("stones", new CommandStones());
+		commands.put("groups", new CommandGroups());
 	}
 	
 	@Override
@@ -89,122 +93,25 @@ public class SPSCommand implements CommandCallable {
 	
 	@Override
 	public Optional<Text> getShortDescription(CommandSource source) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 	
 	@Override
 	public Optional<Text> getHelp(CommandSource source) {
-		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 	
 	@Override
 	public Text getUsage(CommandSource source) {
-		
 		return null;
 	}
-
-	
-//		switch (subcommand) {
-//			case "groups":
-//				if(testPermission(src, "sps.command.groups")){
-//					pagination.title(Text.of("Groups"));
-//					
-//					List<Group> groups = pl.getLimitsManager().getGroups();
-//					pagination.contents(groups.stream().map(Group::toText).collect(Collectors.toList()));
-//					
-//					pagination.build().sendTo(src);
-//					
-//				}
-//				break;
-//			case "stones":
-//				if(testPermission(src, "sps.command.stones")){
-//					pagination.title(Text.of("Stones"));
-//					
-//					List<ProtectionStone> protectionStone = pl.getProtectionManager().getStones();
-//					pagination.contents(protectionStone.stream().map(ProtectionStone::toText).collect(Collectors.toList()));
-//					
-//					pagination.build().sendTo(src);
-//				}
-//				break;
-//			case "limits":
-//				if(testPermission(src, "sps.command.limits")){
-//					if(player!=null){
-//						pagination.title(pl.getLangManager().translate("limits", false));
-//						
-//						Map<ProtectionStone, Integer> limits = pl.getLimitsManager().getLimits(player);
-//						pagination.contents(limits.entrySet().stream().map(entry -> Helper.chatColor("&6"+entry.getKey().getDisplayName()+": &7"+entry.getValue())).collect(Collectors.toList()));
-//						
-//						pagination.build().sendTo(src);
-//					}else{
-//						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
-//					}
-//				}
-//				break;
-//			case "reload":
-//				if(testPermission(src, "sps.command.reload")){
-//					pl.reload(src);
-//				}
-//				break;
-//			case "sreload":
-//				if(testPermission(src, "sps.command.sreload")){
-//					SpongyPS.getInstance().getProtectionManager().reload();
-//					src.sendMessage(Helper.chatColor("&aStones reloaded (Chunks: "+SpongyPS.getInstance().getProtectionManager().chunks()+")..."));
-//				}
-//				break;
-//			case "info":
-//				if(testPermission(src, "sps.command.info")){
-//					if(player!=null){
-//						Optional<Protection> oprotection = ProtectionManager.isRegion(player.getLocation());
-//						if(oprotection.isPresent()){
-//							List<Text> info = new ArrayList<>();
-//							Protection protection = oprotection.get();
-//							
-//							if(SpongyPS.getInstance().getConfigManger().getNode("info", "show-id").getBoolean()){
-//								info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-id").add("{id}", String.valueOf(protection.getID())), false));
-//							}
-//							
-//							info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-owner").add("{owner}", protection.getOwnerName()), false));
-//							info.add(SpongyPS.getInstance().getLangManager().translate(
-//									new LocaleFormat("info-center")
-//									.add("{x}", String.valueOf(protection.getCenter().getBlockX()))
-//									.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
-//									.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
-//							
-//							PaginationList.builder().contents(info).title(pl.getLangManager().translate("info-title", false)).sendTo(src);
-//						}else{
-//							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));	
-//						}
-//					}else{
-//						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
-//					}
-//				}
-//				break;
-//			case "visualize":
-//				if(testPermission(src, "sps.command.visualize")){
-//					if(player!=null){
-//						Optional<Protection> protection = ProtectionManager.isRegion(player.getLocation());
-//						if(protection.isPresent()){
-//							protection.get().visualize(player);
-//						}else{
-//							src.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", true));	
-//						}
-//					}else{
-//						src.sendMessage(Helper.chatColor("&cOnly players can execute this command"));
-//					}
-//				}
-//				break;
-//			default:
-//				return CommandResult.empty();
-//		}
 	
 	public boolean testPermission(CommandSource src, String permission){
 		if(src.hasPermission(permission)){
 			return true;
 		}
 		
-		src.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-permission", true));
+		src.sendMessage(pl.getLangManager().translate("no-permission", true));
 		return false;
 	}
 
