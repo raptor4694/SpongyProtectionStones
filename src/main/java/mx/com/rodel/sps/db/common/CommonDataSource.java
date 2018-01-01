@@ -49,6 +49,8 @@ public interface CommonDataSource {
 	
 	abstract List<Protection> searchProtections(World world);
 	
+	abstract void updatePlayerName(Player player);
+	
 	/**
 	 * Return the Sponge native SqlService
 	 * 

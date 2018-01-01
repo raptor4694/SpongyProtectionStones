@@ -57,4 +57,9 @@ public class DatabaseManager implements CommonDataSource{
 	public List<Protection> searchProtections(World world) {
 		return dataSource.searchProtections(world);
 	}
+	
+	@Override
+	public void updatePlayerName(Player player) {
+		dataSource.updatePlayerName(player);
+	}
 }

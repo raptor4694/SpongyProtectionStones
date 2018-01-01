@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -156,6 +158,19 @@ public class MySQLAdapter implements CommonDataSource{
 		return protections;
 	}
 
+	@Override
+	public void updatePlayerName(Player player) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update "+protection_table+" set `owner_name`=? where `owner`=? and `owner_name`!=?");
+			ps.setString(1, player.getName());
+			ps.setString(2, player.getUniqueId().toString());
+			ps.setString(3, player.getName());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
 		try (Connection conn = getDataSource().getConnection()) {
