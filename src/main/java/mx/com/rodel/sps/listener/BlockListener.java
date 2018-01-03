@@ -15,6 +15,7 @@ import com.flowpowered.math.vector.Vector2i;
 import com.google.common.collect.ImmutableMap;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.api.SPSApi;
 import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.protection.ProtectionStone;
@@ -35,7 +36,7 @@ public class BlockListener {
 			Location<World> blockLoc = block.getLocation().get();
 			
 			// Check permissions
-			Optional<Protection> op = SpongyPS.getInstance().getProtectionManager().isRegion(blockLoc);
+			Optional<Protection> op = SPSApi.getProtection(blockLoc);
 			if(op.isPresent()){
 				Protection protection = op.get();
 				

@@ -23,6 +23,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.api.SPSApi;
 import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.utils.Helper;
 
