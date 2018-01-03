@@ -55,14 +55,12 @@ public class CommandRemove implements ICommand{
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "remove";
 	}
 
 	@Override
 	public String getUsage() {
-		// TODO Auto-generated method stub
-		return null;
+		return "<player>";
 	}
 
 	@Override

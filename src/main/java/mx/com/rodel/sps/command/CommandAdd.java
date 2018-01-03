@@ -20,7 +20,7 @@ public class CommandAdd implements ICommand{
 			if(oplayer.isPresent()){
 				Player p = oplayer.get();
 				if(p.getUniqueId().equals(player.getUniqueId())){ // It it trying to add itself?
-					source.sendMessage(SpongyPS.getInstance().getLangManager().translate("member-already", true));
+					source.sendMessage(SpongyPS.getInstance().getLangManager().translate("member-yourself", true));
 					return true;
 				}
 				Optional<Protection> op = SpongyPS.getInstance().getProtectionManager().isRegion(player.getLocation());
