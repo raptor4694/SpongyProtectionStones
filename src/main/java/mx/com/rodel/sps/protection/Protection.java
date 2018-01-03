@@ -224,6 +224,11 @@ public class Protection {
 		SpongyPS.getInstance().getDatabaseManger().updateMembers(id, members);
 	}
 	
+	public void removeMember(UUID member) {
+		members.remove(member);
+		SpongyPS.getInstance().getDatabaseManger().updateMembers(id, members);
+	}
+	
 	public int getID(){
 		return id;
 	}
@@ -256,4 +261,5 @@ public class Protection {
 		}
 		return false;
 	}
+
 }

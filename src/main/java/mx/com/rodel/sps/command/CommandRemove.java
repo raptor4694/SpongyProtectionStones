@@ -1,8 +1,9 @@
 package mx.com.rodel.sps.command;
 
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -10,30 +11,36 @@ import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.protection.Protection;
 
-public class CommandAdd implements ICommand{
+public class CommandRemove implements ICommand{
 
 	@Override
 	public boolean onCommand(CommandSource source, String[] args) {
 		Player player = getPlayer(source);
 		if(player!=null && args.length>0){
-			Optional<Player> oplayer = Sponge.getServer().getPlayer(args[0]);
-			if(oplayer.isPresent()){
-				Player p = oplayer.get();
-				if(p.getUniqueId().equals(player.getUniqueId())){ // It it trying to add itself?
-					source.sendMessage(SpongyPS.getInstance().getLangManager().translate("member-already", true));
-					return true;
-				}
 				Optional<Protection> op = SpongyPS.getInstance().getProtectionManager().isRegion(player.getLocation());
 				if(op.isPresent()){
 					Protection protection = op.get();
 					
 					if(protection.getOwner().equals(player.getUniqueId())){ // Its owner?
-						if(protection.getMembers().get(p.getUniqueId())==null){ // The player isn't added already?
-							protection.addMember(p.getUniqueId(), p.getName());
-							source.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("member-add").add("{member}", p.getName()), true));
-						}else{
-							source.sendMessage(SpongyPS.getInstance().getLangManager().translate("member-already", true));
+						UUID remove = null;
+						for(Entry<UUID, String> member : protection.getMembers().entrySet()){
+							if(member.getValue().equalsIgnoreCase(args[0])){
+								remove = member.getKey();
+								source.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("member-remove").add("{member}", member.getValue()), true));
+								break;
+							}
 						}
+						
+						if(remove!=null){
+							protection.removeMember(remove);
+						}else{
+							source.sendMessage(SpongyPS.getInstance().getLangManager().translate("member-missing", true));
+						}
+						
+//						if(protection.getMembers().get(p.getUniqueId())==null){ // The player isn't added already?
+//							protection.removeMember(p.getUniqueId());
+//						}else{
+//						}
 					}else{
 						source.sendMessage(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("no-owner"), true));
 					}
@@ -41,9 +48,6 @@ public class CommandAdd implements ICommand{
 				}else{
 					source.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));
 				}
-			}else{
-				source.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-player", false));
-			}
 			return true;
 		}
 		return false;
@@ -51,16 +55,18 @@ public class CommandAdd implements ICommand{
 
 	@Override
 	public String getName() {
-		return "add";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getUsage() {
-		return "<name>";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Add a member into the protection";
+		return "Removes a player from the protection";
 	}
 }
