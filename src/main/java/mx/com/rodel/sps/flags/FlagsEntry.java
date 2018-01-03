@@ -15,16 +15,11 @@ import mx.com.rodel.sps.SpongyPS;
 public class FlagsEntry {
 	private Map<String, Object> flags = new HashMap<>();
 
-	public FlagsEntry() {
-		setDefault();
-	}
-	
-	public void setDefault(){
-		flags = SpongyPS.getInstance().getFlagManager().getFlags();
-	}
-	
-	public ImmutableMap<String, Object> getFlags(){
-		return ImmutableMap.copyOf(flags);
+	public ImmutableMap<String, Object> getFullFlags(){
+		Map<String, Object> fullFlags = new HashMap<>();
+		fullFlags.putAll(SpongyPS.getInstance().getFlagManager().getFlags());
+		fullFlags.putAll(flags); // Override
+		return ImmutableMap.copyOf(fullFlags);
 	}
 	
 	public String serialize(){

@@ -37,7 +37,7 @@ public class CommandInfo implements ICommand{
 						.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
 						.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
 				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-members").add("{members}", String.join(", ", protection.getMembers().values())), false));
-				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-flags").add("{flags}", "&6"+Joiner.on(", &6").withKeyValueSeparator(":&7 ").join(protection.getFlags().getFlags())), false));
+				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-flags").add("{flags}", "&6"+Joiner.on(", &6").withKeyValueSeparator(":&7 ").join(protection.getFlags().getFullFlags())), false));
 				
 				PaginationList.builder().contents(info).title(SpongyPS.getInstance().getLangManager().translate("info-title", false)).sendTo(source);
 			}else{

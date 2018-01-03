@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.api.SPSApi;
+import mx.com.rodel.sps.flags.FlagManager;
 import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -240,8 +241,12 @@ public class Protection {
 	
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getFlag(String name, Class<T> type){
-		Object o = flags.getFlags().get(name);
+		Object o = flags.getFullFlags().get(name);
 		return o==null ? Optional.empty() : Optional.of((T) o);
+	}
+	
+	public void setFlag(String name, Object value){
+//		flags.getFullFlags().get(name).getClass().equals(value.getClass());
 	}
 	
 	public int getID(){

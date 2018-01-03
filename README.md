@@ -2,6 +2,10 @@
 
 SpongyProtectionStones its a basic port of any PreciousStones plugin, just with the basic protection stone type
 
+## Permissions
++ Flags: `ps.flag.{flag-name}`
++ Commands: `ps.command.{command-name}`
+
 ## Developers
 
 ### How to add new flags
