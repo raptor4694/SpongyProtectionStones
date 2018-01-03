@@ -14,7 +14,6 @@ import com.google.common.base.Joiner;
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.protection.Protection;
-import mx.com.rodel.sps.utils.Helper;
 
 public class CommandInfo implements ICommand{
 
@@ -38,14 +37,12 @@ public class CommandInfo implements ICommand{
 						.add("{y}", String.valueOf(protection.getCenter().getBlockY()))
 						.add("{z}", String.valueOf(protection.getCenter().getBlockZ())), false));
 				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-members").add("{members}", String.join(", ", protection.getMembers().values())), false));
-				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-flags").add("{flags}", Joiner.on(", ").withKeyValueSeparator("=").join(protection.getFlags().getFlags())), false));
+				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-flags").add("{flags}", "&6"+Joiner.on(", &6").withKeyValueSeparator(":&7 ").join(protection.getFlags().getFlags())), false));
 				
 				PaginationList.builder().contents(info).title(SpongyPS.getInstance().getLangManager().translate("info-title", false)).sendTo(source);
 			}else{
 				source.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));
 			}
-		}else{
-			source.sendMessage(Helper.chatColor("&cThis comand is only for players"));
 		}
 		return true;
 	}

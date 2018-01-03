@@ -8,6 +8,8 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.google.common.collect.ImmutableMap;
@@ -24,10 +26,28 @@ public class BlockListener {
 		Optional<Player> oplayer = Helper.playerCause(e.getCause());
 		if(oplayer.isPresent()){
 			Player player = oplayer.get();
+			BlockSnapshot block = e.getTransactions().get(0).getFinal();
+
+			if(!block.getLocation().isPresent()){
+				return;
+			}
+			
+			Location<World> blockLoc = block.getLocation().get();
+			
+			// Check permissions
+			Optional<Protection> op = SpongyPS.getInstance().getProtectionManager().isRegion(blockLoc);
+			if(op.isPresent()){
+				Protection protection = op.get();
+				
+				if(protection.getFlag("prevent-build", Boolean.class).orElse(true) && !protection.hasPermission(player.getUniqueId())){
+					player.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-build", true));
+					e.setCancelled(true);
+					return;
+				}
+			}
 			
 			// Sneaking?
 			if(player.get(Keys.IS_SNEAKING).orElse(false)){
-				BlockSnapshot block = e.getTransactions().get(0).getFinal();
 				Optional<ProtectionStone> ostone = SpongyPS.getInstance().getProtectionManager().getStoneByBlock(block.getState().getType());
 				if(ostone.isPresent()){
 					// START Protection placing code

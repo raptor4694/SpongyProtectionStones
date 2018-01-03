@@ -22,8 +22,6 @@ public class CommandLimits implements ICommand{
 			Map<ProtectionStone, Integer> limits = SpongyPS.getInstance().getLimitsManager().getLimits(player);
 			
 			builder.contents(limits.entrySet().stream().map(entry -> Helper.chatColor("&6"+entry.getKey().getDisplayName()+": &7"+entry.getValue())).collect(Collectors.toList())).sendTo(player);
-		}else{
-			source.sendMessage(Helper.chatColor("&cThis comand is only for players"));
 		}
 		return true;
 	}

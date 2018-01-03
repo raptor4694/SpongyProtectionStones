@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -132,6 +133,10 @@ public class Protection {
 		return x >= min.getX() && x <= max.getX() && y >= min.getY() && y <= max.getY() && z >= min.getZ() && z <= max.getZ();
 	}
 	
+	public boolean hasPermission(UUID uuid){
+		return owner.equals(uuid) || members.containsKey(uuid);
+	}
+	
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
@@ -230,6 +235,12 @@ public class Protection {
 	
 	public FlagsEntry getFlags(){
 		return flags;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> Optional<T> getFlag(String name, Class<T> type){
+		Object o = flags.getFlags().get(name);
+		return o==null ? Optional.empty() : Optional.of((T) o);
 	}
 	
 	public int getID(){
