@@ -1,7 +1,6 @@
 package mx.com.rodel.sps.protection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import mx.com.rodel.sps.SpongyPS;
+import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.utils.Helper;
 
 public class Protection {
@@ -30,10 +30,10 @@ public class Protection {
 	private UUID owner;
 	private String owner_name;
 	private Map<UUID, String> members = new HashMap<>();
-	private List<String> flags = new ArrayList<>();
 	private World world;
 	private Vector3i center, min, max;
 	private ProtectionStone type;
+	private FlagsEntry flags = new FlagsEntry();
 	
 	public Protection(int id) {
 		this.id = id;
@@ -55,7 +55,7 @@ public class Protection {
 		max = vertices[1];
 	}
 	
-	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, List<String> flags) {
+	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
 		this.id = id;
 		this.world = world;
 		this.owner = owner;
@@ -64,11 +64,10 @@ public class Protection {
 		this.min = min;
 		this.max = max;
 		this.members = members;
-		this.flags = flags;
-		
+		this.flags = flags==null || flags.isEmpty() ? this.flags : FlagsEntry.deserialize(flags);
 	}
 	
-	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, List<String> flags) {
+	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
 		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags);
 	}
 	
@@ -139,7 +138,7 @@ public class Protection {
 				.add("id", id)
 				.add("owner", owner)
 				.add("members", Joiner.on(";").withKeyValueSeparator("=").join(members))
-				.add("flags", Arrays.deepToString(flags.toArray(new String[] {})))
+				.add("flags", flags.serialize())
 				.add("world", world)
 				.add("center", center)
 				.add("min", min)
@@ -227,6 +226,10 @@ public class Protection {
 	public void removeMember(UUID member) {
 		members.remove(member);
 		SpongyPS.getInstance().getDatabaseManger().updateMembers(id, members);
+	}
+	
+	public FlagsEntry getFlags(){
+		return flags;
 	}
 	
 	public int getID(){

@@ -20,9 +20,10 @@ import mx.com.rodel.sps.config.ConfigurationManager;
 import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.db.DatabaseManager;
 import mx.com.rodel.sps.db.common.MySQLAdapter;
+import mx.com.rodel.sps.flags.FlagManager;
 import mx.com.rodel.sps.limits.LimitsManager;
 import mx.com.rodel.sps.listener.PlayerListener;
-import mx.com.rodel.sps.listener.ProtectionPlaceEvent;
+import mx.com.rodel.sps.listener.BlockListener;
 import mx.com.rodel.sps.listener.WorldListener;
 import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.utils.Helper;
@@ -84,6 +85,11 @@ public class SpongyPS {
 		return limitsManager;
 	}
 	
+	private FlagManager flagManager;
+	public FlagManager getFlagManager() {
+		return flagManager;
+	}
+	
 	@Listener
 	public void onGameReloadEvent(GameReloadEvent e){
 		reload(Sponge.getServer().getConsole());
@@ -95,6 +101,11 @@ public class SpongyPS {
 			configManager = new ConfigurationManager(this);
 		}
 		configManager.load();
+		
+		// Flags
+		if(flagManager==null){
+			flagManager = new FlagManager(this);
+		}
 		
 		// Localization
 		if(langManager==null){
@@ -148,7 +159,7 @@ public class SpongyPS {
 		
 		Sponge.getCommandManager().register(this, command, "ps", "sps");
 		
-		Sponge.getEventManager().registerListeners(this, new ProtectionPlaceEvent());
+		Sponge.getEventManager().registerListeners(this, new BlockListener());
 		Sponge.getEventManager().registerListeners(this, new WorldListener());
 		Sponge.getEventManager().registerListeners(this, new PlayerListener());
 	}

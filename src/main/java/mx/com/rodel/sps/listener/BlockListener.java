@@ -18,7 +18,7 @@ import mx.com.rodel.sps.protection.Protection;
 import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
 
-public class ProtectionPlaceEvent {
+public class BlockListener {
 	@Listener
 	public void onBlockPlace(ChangeBlockEvent.Place e){
 		Optional<Player> oplayer = Helper.playerCause(e.getCause());
@@ -41,7 +41,7 @@ public class ProtectionPlaceEvent {
 						Protection mock = new Protection(player.getUniqueId(), player.getName(), player.getWorld(), block.getPosition(), stone);
 						
 						for(Vector2i chunk : mock.getParentChunks()){
-							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(chunk)){
+							for(Protection protection : SpongyPS.getInstance().getProtectionManager().getProtectionsInChunk(player.getWorld().getUniqueId(), chunk)){
 								if(protection.intersects(mock)){
 									player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-overlapping", true)); // Yep.. its overlapping
 									return;

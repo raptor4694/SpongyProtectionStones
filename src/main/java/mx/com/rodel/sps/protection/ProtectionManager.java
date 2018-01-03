@@ -2,11 +2,11 @@ package mx.com.rodel.sps.protection;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 import org.spongepowered.api.Sponge;
@@ -28,7 +28,7 @@ public class ProtectionManager extends IConfiguration{
 	// It can be changed while players are placing stones
 	private ConcurrentMap<String, ProtectionStone> stoneTypes = Maps.newConcurrentMap();
 	
-	private ConcurrentMap<Vector2i, List<Protection>> protectionByChunk = Maps.newConcurrentMap();
+	private ConcurrentMap<UUID, ConcurrentMap<Vector2i, List<Protection>>> protectionByChunk = Maps.newConcurrentMap();
 	
 	public ProtectionManager(SpongyPS pl) {
 		super("stones.conf", pl);
@@ -92,7 +92,7 @@ public class ProtectionManager extends IConfiguration{
 		// First check chunk protections in cache
 		int chunkX = location.getBlockX() >> 4;
 		int chunkZ = location.getBlockZ() >> 4;
-		List<Protection> protections = protectionByChunk.get(new Vector2i(chunkX, chunkZ));
+		List<Protection> protections = protectionByChunk.get(location.getExtent().getUniqueId()).get(new Vector2i(chunkX, chunkZ));
 		
 		if(protections==null){
 			return Optional.empty();
@@ -110,30 +110,32 @@ public class ProtectionManager extends IConfiguration{
 
 	public int loadProtections(World world) {
 		List<Protection> protections = SpongyPS.getInstance().getDatabaseManger().searchProtections(world);
+		protectionByChunk.put(world.getUniqueId(), Maps.newConcurrentMap());
 		
 		for(Protection protection : protections){
-			putProtection(protection);
+			putProtection(protection, world);
 		}
 		
 		return protections.size();
 	}
 	
 	public void saveProtection(Protection protection) throws SQLException{
-		 putProtection(protection);
+		 putProtection(protection, protection.getCenter().getExtent());
 		 SpongyPS.getInstance().getDatabaseManger().createProtection(
 				 protection.getOwner(), protection.getOwnerName(), protection.getMin(), protection.getMax(), protection.getCenter(), protection.getType().getName());
 	}
 	
-	private void putProtection(Protection protection){
+	private void putProtection(Protection protection, World world){
+		ConcurrentMap<Vector2i, List<Protection>> currentWorld = protectionByChunk.get(world.getUniqueId());
 		for(Vector2i chunk : protection.getParentChunks()){
-			List<Protection> currentProtections = protectionByChunk.getOrDefault(chunk, new ArrayList<>());
+			List<Protection> currentProtections = currentWorld.getOrDefault(chunk, new ArrayList<>());
 			currentProtections.add(protection);
-			protectionByChunk.put(chunk, currentProtections);
+			currentWorld.put(chunk, currentProtections);
 		}
 	}
 	
-	public List<Protection> getProtectionsInChunk(Vector2i chunk){
-		return protectionByChunk.getOrDefault(chunk, new ArrayList<>());
+	public List<Protection> getProtectionsInChunk(UUID worldID, Vector2i chunk){
+		return protectionByChunk.get(worldID).getOrDefault(chunk, new ArrayList<>());
 	}
 
 	public int reload() {

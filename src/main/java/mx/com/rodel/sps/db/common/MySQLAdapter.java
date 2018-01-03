@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,8 +110,6 @@ public class MySQLAdapter implements CommonDataSource{
 	public Protection protectionWrapper(ResultSet rs) throws SQLException, WorldNotFoundException{
 		String worldUID = rs.getString("world");
 		World world = Sponge.getServer().getWorld(UUID.fromString(worldUID)).orElseThrow(()->new WorldNotFoundException(worldUID));
-		String flag = rs.getString("flags");
-		List<String> flags = flag==null ? new ArrayList<>() : Arrays.asList(flag.split(";"));
 		
 		String member = rs.getString("members");
 		Map<UUID, String> members = new HashMap<>();
@@ -133,7 +130,7 @@ public class MySQLAdapter implements CommonDataSource{
 				new Vector3i(rs.getInt("minx"), rs.getInt("miny"), rs.getInt("minz")), 
 				new Vector3i(rs.getInt("maxx"), rs.getInt("maxy"), rs.getInt("maxz")), 
 				members, 
-				flags);
+				rs.getString("flags"));
 	}
 
 	@Override
