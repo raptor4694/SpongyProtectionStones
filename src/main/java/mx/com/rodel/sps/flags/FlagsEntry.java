@@ -50,8 +50,6 @@ public class FlagsEntry {
 		JsonParser parser = new JsonParser();
 		JsonObject obj = parser.parse(json).getAsJsonObject();
 		for(Entry<String, JsonElement> e : obj.entrySet()){
-			System.out.println(e.getKey()+" "+e.getValue());
-			
 			String key = e.getKey();
 			
 			JsonElement el = e.getValue();
@@ -64,8 +62,6 @@ public class FlagsEntry {
 				}else if(primitive.isString()){
 					out.flags.put(key, primitive.getAsString());
 				}
-				
-				System.out.println(out.flags.get(key)+" "+out.flags.get(key).getClass().getName());
 			}
 		}
 		

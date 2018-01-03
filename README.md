@@ -14,3 +14,27 @@ SpongyProtectionStones its a basic port of any PreciousStones plugin, just with 
 
 ### Notes about testing
 + In case you need to modify stuff in DB, you should do `/ps sreload` this will reload all protections saved by chunk location in memory 
+
+### TODO LIST
+
+Ordered by Priority
+
+##### TODO:
++ gretting message
++ set owner command
++ protection break
++ API
++ "Probably" List of all protections in the server, make a custom loading pagination that takes information while scrolling
+
+#### PROGRESS:
++ flags
+
+#### NEED TESTING:
+
+#### BACKLOG:
++ better ps info
++ fix place protection message
++ visualize on place
++ owner (uuid=name) [owner & owner_name]
++ update name on player join
++ members
