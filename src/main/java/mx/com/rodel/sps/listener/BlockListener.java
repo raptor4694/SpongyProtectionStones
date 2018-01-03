@@ -36,15 +36,9 @@ public class BlockListener {
 			Location<World> blockLoc = block.getLocation().get();
 			
 			// Check permissions
-			Optional<Protection> op = SPSApi.getProtection(blockLoc);
-			if(op.isPresent()){
-				Protection protection = op.get();
-				
-				if(protection.getFlag("prevent-build", Boolean.class).orElse(true) && !protection.hasPermission(player.getUniqueId())){
-					player.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-build", true));
-					e.setCancelled(true);
-					return;
-				}
+			if(checkBuild(blockLoc, player)){
+				e.setCancelled(true);
+				return;
 			}
 			
 			// Sneaking?
@@ -83,5 +77,39 @@ public class BlockListener {
 			}
 			
 		}
+	}
+	
+	@Listener
+	public void onBlockBreak(ChangeBlockEvent.Break e){
+		Optional<Player> oplayer = Helper.playerCause(e.getCause());
+		if(oplayer.isPresent()){
+			Player player = oplayer.get();
+			BlockSnapshot block = e.getTransactions().get(0).getFinal();
+
+			if(!block.getLocation().isPresent()){
+				return;
+			}
+			
+			Location<World> blockLoc = block.getLocation().get();
+			
+			// Check permissions
+			if(checkBuild(blockLoc, player)){
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
+	
+	public boolean checkBuild(Location<World> blockLoc, Player player){
+		Optional<Protection> op = SPSApi.getProtection(blockLoc);
+		if(op.isPresent()){
+			Protection protection = op.get();
+			
+			if(protection.getFlag("prevent-build", Boolean.class).orElse(true) && !protection.hasPermission(player.getUniqueId())){
+				player.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-build", true));
+				return true;
+			}
+		}
+		return false;
 	}
 }
