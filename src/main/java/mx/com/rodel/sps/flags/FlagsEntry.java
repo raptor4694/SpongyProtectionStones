@@ -10,6 +10,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import mx.com.rodel.sps.SpongyPS;
+
 public class FlagsEntry {
 	private Map<String, Object> flags = new HashMap<>();
 
@@ -18,7 +20,7 @@ public class FlagsEntry {
 	}
 	
 	public void setDefault(){
-		flags.put("prevent-build", true);
+		flags = SpongyPS.getInstance().getFlagManager().getFlags();
 	}
 	
 	public ImmutableMap<String, Object> getFlags(){

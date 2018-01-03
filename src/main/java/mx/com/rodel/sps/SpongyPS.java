@@ -21,6 +21,7 @@ import mx.com.rodel.sps.config.LangManager;
 import mx.com.rodel.sps.db.DatabaseManager;
 import mx.com.rodel.sps.db.common.MySQLAdapter;
 import mx.com.rodel.sps.flags.FlagManager;
+import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.limits.LimitsManager;
 import mx.com.rodel.sps.listener.PlayerListener;
 import mx.com.rodel.sps.listener.BlockListener;
@@ -102,16 +103,18 @@ public class SpongyPS {
 		}
 		configManager.load();
 		
-		// Flags
-		if(flagManager==null){
-			flagManager = new FlagManager(this);
-		}
 		
 		// Localization
 		if(langManager==null){
 			langManager = new LangManager(this);
 		}
 		langManager.load();
+		
+		// Flags
+		if(flagManager==null){
+			flagManager = new FlagManager(this);
+		}
+		flagManager.registerFlags();
 		
 		// Stones
 		if(protectionManager==null){
