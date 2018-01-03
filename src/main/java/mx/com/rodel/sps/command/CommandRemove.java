@@ -65,6 +65,6 @@ public class CommandRemove implements ICommand{
 
 	@Override
 	public String getDescription() {
-		return "Removes a player from the protection";
+		return SpongyPS.getInstance().getLangManager().localize("commands-remove-description");
 	}
 }

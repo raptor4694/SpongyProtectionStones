@@ -14,6 +14,7 @@ import com.google.common.base.Joiner;
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.config.LocaleFormat;
 import mx.com.rodel.sps.protection.Protection;
+import mx.com.rodel.sps.utils.Helper;
 
 public class CommandInfo implements ICommand{
 
@@ -43,6 +44,8 @@ public class CommandInfo implements ICommand{
 			}else{
 				source.sendMessage(SpongyPS.getInstance().getLangManager().translate("info-nostone", false));
 			}
+		}else{
+			source.sendMessage(Helper.chatColor("&cThis comand is only for players"));
 		}
 		return true;
 	}

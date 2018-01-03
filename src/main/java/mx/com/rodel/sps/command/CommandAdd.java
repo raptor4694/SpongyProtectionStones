@@ -61,6 +61,6 @@ public class CommandAdd implements ICommand{
 
 	@Override
 	public String getDescription() {
-		return "Add a member into the protection";
+		return SpongyPS.getInstance().getLangManager().localize("commands-add-description");
 	}
 }
