@@ -5,6 +5,7 @@ SpongyProtectionStones its a basic port of any PreciousStones plugin, just with 
 ## Permissions
 + Flags: `ps.flag.{flag-name}`
 + Commands: `ps.command.{command-name}`
++ Build flag bypass: `ps.bypass.build`
 
 ## Developers
 
@@ -30,12 +31,12 @@ Ordered by Priority
 + "Probably" List of all protections in the server, make a custom loading pagination that takes information while scrolling
 
 #### PROGRESS:
-+ gretting message
-+ flags
++ flags (Need to implement more complex flags)
 
 #### NEED TESTING:
 
 #### BACKLOG:
++ gretting message
 + better ps info
 + fix place protection message
 + visualize on place

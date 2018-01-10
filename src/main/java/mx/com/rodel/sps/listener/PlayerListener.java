@@ -13,6 +13,7 @@ import org.spongepowered.api.world.World;
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.api.SPSApi;
 import mx.com.rodel.sps.protection.Protection;
+import mx.com.rodel.sps.utils.Helper;
 
 public class PlayerListener {
 	@Listener
@@ -43,16 +44,21 @@ public class PlayerListener {
 				Optional<Protection> pFrom = SPSApi.getProtection(new Location<World>(from.getExtent(), from.getBlockPosition()));
 				Optional<Protection> pTo = SPSApi.getProtection(new Location<World>(to.getExtent(), to.getBlockPosition()));
 
-				// From is not a protetion
-//				if(pFrom.isPresent())
-				
 				if(pTo.isPresent() && (!pFrom.isPresent() || pFrom.get().getID()!=pTo.get().getID())){
-					System.out.println("JOIN");
+					Optional<String> message = pTo.get().getFlag("welcome-message", String.class);
+					if(message.isPresent() && !message.toString().trim().isEmpty()){
+						Player player = (Player) e.getTargetEntity();
+						player.sendMessage(Helper.chatColor(message.get()));
+					}
 					return;
 				}
 				
 				if(pFrom.isPresent() && (!pTo.isPresent() || pTo.get().getID()!=pFrom.get().getID())){
-					System.out.println("LEAVE");
+					Optional<String> message = pFrom.get().getFlag("farewell-message", String.class);
+					if(message.isPresent() && !message.get().trim().isEmpty()){
+						Player player = (Player) e.getTargetEntity();
+						player.sendMessage(Helper.chatColor(message.get()));
+					}
 				}
 			}
 		}
