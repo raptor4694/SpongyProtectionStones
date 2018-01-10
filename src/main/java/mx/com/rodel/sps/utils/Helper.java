@@ -130,4 +130,13 @@ public class Helper {
 	public static Text chatColor(String text){
 		return TextSerializers.FORMATTING_CODE.deserialize(text);
 	}
+	
+	public static boolean isNumber(String string){
+		for(char c : string.toCharArray()){
+			if(!Character.isDigit(c)){
+				return false;
+			}
+		}
+		return true;
+	}
 }

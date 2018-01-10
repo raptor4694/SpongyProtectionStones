@@ -54,6 +54,8 @@ public interface CommonDataSource {
 	
 	abstract void updateMembers(int id, Map<UUID, String> members);
 	
+	abstract void updateFlags(int id, String json);
+	
 	abstract Protection searchRegion(int id);
 	
 	/**

@@ -15,6 +15,7 @@ import com.flowpowered.math.vector.Vector3i;
 
 import mx.com.rodel.sps.db.common.CommonDataSource;
 import mx.com.rodel.sps.db.common.SqlServiceNotFound;
+import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.protection.Protection;
 
 public class DatabaseManager implements CommonDataSource{
@@ -67,6 +68,11 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public void updateMembers(int id, Map<UUID, String> members) {
 		dataSource.updateMembers(id, members);
+	}
+	
+	@Override
+	public void updateFlags(int id, String json){
+		dataSource.updateFlags(id, json);
 	}
 	
 	@Override

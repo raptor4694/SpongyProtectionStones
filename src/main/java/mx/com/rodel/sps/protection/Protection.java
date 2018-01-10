@@ -23,8 +23,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import mx.com.rodel.sps.SpongyPS;
-import mx.com.rodel.sps.api.SPSApi;
-import mx.com.rodel.sps.flags.FlagManager;
 import mx.com.rodel.sps.flags.FlagsEntry;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -219,12 +217,14 @@ public class Protection {
 	}
 	
 	public void addMember(UUID member, String memberName){
-		// @Important
+		// @Fact
 		// Its needed just to do it in this class, cause when we load the protections
 		// we create a new protection and then place it on the chunks
 		// we are not cloning or making more protections, just using the same copy all the time
 		// then when i update the members variable, this updates in all chunks on the "protectionsByChunk" in ProtectionManager
 		// it took me a lot of time to think about it, but after test it works perfectly ;)
+		// @Edit
+		// These days i learn a lot of c++, java by default uses pointer, thats why this happen
 		
 		members.put(member, memberName);
 		SpongyPS.getInstance().getDatabaseManger().updateMembers(id, members);
@@ -246,7 +246,8 @@ public class Protection {
 	}
 	
 	public void setFlag(String name, Object value){
-//		flags.getFullFlags().get(name).getClass().equals(value.getClass());
+		flags.setFlag(name, value);
+		SpongyPS.getInstance().getDatabaseManger().updateFlags(id, flags.serialize());
 	}
 	
 	public int getID(){

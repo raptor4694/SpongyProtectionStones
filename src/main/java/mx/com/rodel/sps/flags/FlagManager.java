@@ -1,7 +1,9 @@
 package mx.com.rodel.sps.flags;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -28,11 +30,42 @@ public class FlagManager {
 	 * @param defaultVal bool, string, int
 	 */
 	public void registerFlag(String flag, Object defaultVal){
-		pl.getLogger().info("Flag {} (Default: {}) registered!", flag, defaultVal);
-		registeredFlags.put(flag, defaultVal);
+		for(Types type : Types.values()){
+			if(defaultVal.getClass().equals(type.type)){
+				pl.getLogger().info("Flag {} (Default: {}) registered!", flag, defaultVal);
+				registeredFlags.put(flag, defaultVal);
+				return;
+			}
+		}
+		
+		throw new IllegalArgumentException("Error on register flag "+flag+" of type "+defaultVal.getClass().getName()+", you can only use "+Arrays.asList(Types.values()).stream().map(Types::name).collect(Collectors.joining(", "))+" for now!");
 	}
 	
 	public ImmutableMap<String, Object> getFlags(){
 		return ImmutableMap.copyOf(registeredFlags);
+	}
+	
+	public enum Types{
+		BOOLEAN(Boolean.class, "flag-noboolean"),
+		INTEGER(Integer.class, "flag-noint"),
+		STRING(String.class, "flag-nostring");
+		
+		public Class<?> type;
+		public String message;
+		
+		public static Types getByClass(Class<?> type){
+			for(Types t : values()){
+				if(type.equals(t.type)){
+					return t;
+				}
+			}
+			
+			return null;
+		}
+		
+		private Types(Class<?> type, String message){
+			this.type = type;
+			this.message = message;
+		}
 	}
 }

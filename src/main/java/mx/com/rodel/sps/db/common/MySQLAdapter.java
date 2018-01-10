@@ -199,6 +199,19 @@ public class MySQLAdapter implements CommonDataSource{
 	}
 	
 	@Override
+	public void updateFlags(int id, String json) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update "+protection_table+" set `flags`=? where `id`=?");
+			ps.setString(1, json);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
 		try (Connection conn = getDataSource().getConnection()) {
 			String query = "insert into "+protection_table+" "

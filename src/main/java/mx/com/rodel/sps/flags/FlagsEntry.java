@@ -22,6 +22,10 @@ public class FlagsEntry {
 		return ImmutableMap.copyOf(fullFlags);
 	}
 	
+	public void setFlag(String key, Object value){
+		flags.put(key, value);
+	}
+	
 	public String serialize(){
 		JsonObject obj = new JsonObject();
 		for(Entry<String, Object> flag : flags.entrySet()){

@@ -9,7 +9,7 @@ SpongyProtectionStones its a basic port of any PreciousStones plugin, just with 
 ## Developers
 
 ### How to add new flags
-+ Register the flag `SPSApi.registerFlag(String name, Object defaultValue)`
++ Register the flag `SPSApi.registerFlag(String name, Object defaultValue)` (Important: You can only use the type String, Boolean and Integer for now, more types will be used in the future)
 + In the event you want to listen...
 	+ First check if there is any protection `SPSApi.getProtection(Location<World> location)` this method will return a optional
 	+ Now get the value of your flag in the protection, `Protection.getFlag(String name, Class<T> type)` this also will return a optional
