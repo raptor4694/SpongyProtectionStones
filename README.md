@@ -24,13 +24,13 @@ SpongyProtectionStones its a basic port of any PreciousStones plugin, just with 
 Ordered by Priority
 
 ##### TODO:
-+ gretting message
 + set owner command
 + protection break
 + API
 + "Probably" List of all protections in the server, make a custom loading pagination that takes information while scrolling
 
 #### PROGRESS:
++ gretting message
 + flags
 
 #### NEED TESTING:

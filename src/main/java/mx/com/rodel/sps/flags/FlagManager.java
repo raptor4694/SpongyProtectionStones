@@ -21,6 +21,7 @@ public class FlagManager {
 	public void registerFlags(){
 		registerFlag("prevent-build", true);
 		registerFlag("welcome-message", "");
+		registerFlag("farewell-message", "");
 	}
 	
 	/**
