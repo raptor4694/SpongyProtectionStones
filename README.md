@@ -22,15 +22,17 @@ SpongyProtectionStones its a basic port of any PreciousStones plugin, just with 
 
 ### TODO LIST
 
+There are some @NeedsCleanup in the code!
+
 Ordered by Priority
 
 ##### TODO:
-+ set owner command
-+ protection break
 + API
 + "Probably" List of all protections in the server, make a custom loading pagination that takes information while scrolling
 
 #### PROGRESS:
++ protection break
++ set owner command
 + flags (Need to implement more complex flags)
 
 #### NEED TESTING:

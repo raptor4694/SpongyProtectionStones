@@ -41,6 +41,7 @@ public class SPSCommand implements CommandCallable {
 		commands.put("reload", new CommandReload());
 		commands.put("stones", new CommandStones());
 		commands.put("groups", new CommandGroups());
+		commands.put("setowner", new CommandSetOwner());
 	}
 	
 	@Override

@@ -210,6 +210,20 @@ public class MySQLAdapter implements CommonDataSource{
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void updateOwner(int id, UUID owner, String ownername) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update "+protection_table+" set `owner`=?, `owner_name`=?, where `id`=?");
+			ps.setString(1, owner.toString());
+			ps.setString(2, ownername);
+			ps.setInt(3, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {

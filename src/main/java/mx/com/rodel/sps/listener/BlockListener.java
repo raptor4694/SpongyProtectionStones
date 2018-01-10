@@ -102,7 +102,7 @@ public class BlockListener {
 	
 	public boolean checkBuild(Location<World> blockLoc, Player player){
 		if(player.hasPermission("ps.bypass.build")){
-			return true;
+			return false;
 		}
 		
 		Optional<Protection> op = SPSApi.getProtection(blockLoc);

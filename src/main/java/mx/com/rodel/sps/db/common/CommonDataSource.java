@@ -18,6 +18,7 @@ import com.flowpowered.math.vector.Vector3i;
 
 import mx.com.rodel.sps.protection.Protection;
 
+//@NeedsCleanup
 public interface CommonDataSource {
 	/**
 	 * Get {@link DataSource} wrapper
@@ -55,6 +56,8 @@ public interface CommonDataSource {
 	abstract void updateMembers(int id, Map<UUID, String> members);
 	
 	abstract void updateFlags(int id, String json);
+
+	abstract void updateOwner(int id, UUID owner, String ownername);
 	
 	abstract Protection searchRegion(int id);
 	
