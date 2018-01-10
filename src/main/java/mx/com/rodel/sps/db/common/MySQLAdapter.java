@@ -1,5 +1,6 @@
 package mx.com.rodel.sps.db.common;
 
+import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -226,7 +227,7 @@ public class MySQLAdapter implements CommonDataSource{
 	}
 	
 	@Override
-	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+	public int createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
 		try (Connection conn = getDataSource().getConnection()) {
 			String query = "insert into "+protection_table+" "
 					+ "(`owner`, `owner_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `centerx`, `centery`, `centerz`, `world`, `type`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -252,10 +253,15 @@ public class MySQLAdapter implements CommonDataSource{
 			//Type
 			ps.setString(i, protectionType); i++;
 			ps.executeUpdate();
-			ps.close();
+			
+			ResultSet rs = ps.getGeneratedKeys();
+			if(rs.next()){
+				return rs.getInt(1);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return -1;
 	}
 	
 	@Override
@@ -275,5 +281,17 @@ public class MySQLAdapter implements CommonDataSource{
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void deleteProtection(int id) {
+		try (Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("delete from "+protection_table+" where `id`=?");
+			ps.setInt(1, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

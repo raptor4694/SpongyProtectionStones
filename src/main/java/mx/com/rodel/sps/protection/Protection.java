@@ -283,4 +283,8 @@ public class Protection {
 		return false;
 	}
 
+	public void setID(int id) {
+		this.id = id;
+	}
+
 }

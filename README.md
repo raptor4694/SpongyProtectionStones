@@ -2,6 +2,8 @@
 
 SpongyProtectionStones its a basic port of any PreciousStones plugin, just with the basic protection stone type
 
+Disclaimer: This plugin its still in beta! Its very hard to me add prevention of any way to grief, please consider support this project reporting issues and making pull requests! 
+
 ## Permissions
 + Flags: `ps.flag.{flag-name}`
 + Commands: `ps.command.{command-name}`
@@ -27,6 +29,7 @@ There are some @NeedsCleanup in the code!
 Ordered by Priority
 
 ##### TODO:
++ /ps hide/unhide
 + API
 + "Probably" List of all protections in the server, make a custom loading pagination that takes information while scrolling
 

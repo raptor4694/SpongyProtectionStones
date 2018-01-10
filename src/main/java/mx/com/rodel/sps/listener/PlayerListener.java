@@ -46,7 +46,7 @@ public class PlayerListener {
 
 				if(pTo.isPresent() && (!pFrom.isPresent() || pFrom.get().getID()!=pTo.get().getID())){
 					Optional<String> message = pTo.get().getFlag("welcome-message", String.class);
-					if(message.isPresent() && !message.toString().trim().isEmpty()){
+					if(message.isPresent() && !message.get().trim().isEmpty()){
 						Player player = (Player) e.getTargetEntity();
 						player.sendMessage(Helper.chatColor(message.get()));
 					}

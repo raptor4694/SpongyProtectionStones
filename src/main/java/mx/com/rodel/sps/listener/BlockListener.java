@@ -97,6 +97,16 @@ public class BlockListener {
 				e.setCancelled(true);
 				return;
 			}
+			
+			Optional<Protection> ps = SPSApi.getProtection(blockLoc);
+			
+			if(ps.isPresent()){
+				Protection p = ps.get();
+				if(p.getCenter().equals(blockLoc)){
+					SpongyPS.getInstance().getProtectionManager().deleteProtection(p);
+					player.sendMessage(SpongyPS.getInstance().getLangManager().translate("stone-break", true));
+				}
+			}
 		}
 	}
 	

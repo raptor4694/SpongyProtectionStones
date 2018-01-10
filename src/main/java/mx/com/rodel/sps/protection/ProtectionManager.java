@@ -119,10 +119,20 @@ public class ProtectionManager extends IConfiguration{
 		return protections.size();
 	}
 	
+	public void deleteProtection(Protection protection){
+		ConcurrentMap<Vector2i, List<Protection>> currentWorld = protectionByChunk.get(protection.getCenter().getExtent().getUniqueId());
+		if(currentWorld!=null){
+			for(Vector2i chunk : protection.getParentChunks()){
+				currentWorld.get(chunk).remove(protection);
+			}
+		}
+		SpongyPS.getInstance().getDatabaseManger().deleteProtection(protection.getID());
+	}
+	
 	public void saveProtection(Protection protection) throws SQLException{
 		 putProtection(protection, protection.getCenter().getExtent());
-		 SpongyPS.getInstance().getDatabaseManger().createProtection(
-				 protection.getOwner(), protection.getOwnerName(), protection.getMin(), protection.getMax(), protection.getCenter(), protection.getType().getName());
+		 protection.setID(SpongyPS.getInstance().getDatabaseManger().createProtection(
+				 protection.getOwner(), protection.getOwnerName(), protection.getMin(), protection.getMax(), protection.getCenter(), protection.getType().getName()));
 	}
 	
 	private void putProtection(Protection protection, World world){

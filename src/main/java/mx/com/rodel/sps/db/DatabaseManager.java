@@ -45,8 +45,8 @@ public class DatabaseManager implements CommonDataSource{
 	}
 
 	@Override
-	public void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
-		dataSource.createProtection(owner, owner_name, min, max, location, protectionType);
+	public int createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException {
+		return dataSource.createProtection(owner, owner_name, min, max, location, protectionType);
 	}
 	
 	@Override
@@ -82,5 +82,10 @@ public class DatabaseManager implements CommonDataSource{
 	@Override
 	public Protection searchRegion(int id) {
 		return dataSource.searchRegion(id);
+	}
+
+	@Override
+	public void deleteProtection(int id) {
+		dataSource.deleteProtection(id);
 	}
 }

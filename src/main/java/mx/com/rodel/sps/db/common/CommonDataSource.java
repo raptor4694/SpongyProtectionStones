@@ -45,7 +45,7 @@ public interface CommonDataSource {
 	
 	abstract int countProtectionsOfType(UUID uuid, String name);
 	
-	abstract void createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
+	abstract int createProtection(UUID owner, String owner_name, Vector3i min, Vector3i max, Location<World> location, String protectionType) throws SQLException;
 	
 	abstract Protection searchRegion(UUID world, int x, int y, int z);
 	
@@ -58,6 +58,8 @@ public interface CommonDataSource {
 	abstract void updateFlags(int id, String json);
 
 	abstract void updateOwner(int id, UUID owner, String ownername);
+	
+	abstract void deleteProtection(int id);
 	
 	abstract Protection searchRegion(int id);
 	

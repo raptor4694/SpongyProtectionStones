@@ -28,7 +28,7 @@ import mx.com.rodel.sps.listener.WorldListener;
 import mx.com.rodel.sps.protection.ProtectionManager;
 import mx.com.rodel.sps.utils.Helper;
 
-@Plugin(id = "spongyps", name = "Spongy Protection Stones", version = "1.0", description = "A basic Protection Stones port to Sponge")
+@Plugin(id = "spongyps", name = "Spongy Protection Stones", version = Info.VERSION, description = "A basic Protection Stones port to Sponge")
 public class SpongyPS {
 	private static SpongyPS instance;
 	public static SpongyPS getInstance(){

@@ -17,6 +17,7 @@ import org.spongepowered.api.world.World;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import mx.com.rodel.sps.Info;
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.utils.Helper;
 
@@ -72,6 +73,7 @@ public class SPSCommand implements CommandCallable {
 	}
 	
 	public void help(CommandSource source){
+		source.sendMessage(Helper.chatColor("&9Developed by:&a rodel77 &6(Version: "+Info.VERSION+")"));
 		for(Entry<String, ICommand> command : commands.entrySet()){
 			if(command.getValue().testPermission(source, false)){
 				source.sendMessage(Helper.chatColor("&a/ps "+command.getValue().getName()+command.getValue().getHelp()));

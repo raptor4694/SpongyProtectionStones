@@ -1,0 +1,6 @@
+TODO:
++ API
++ You can remove items from your inventory
+
+BACKLOG:
++ Tax
