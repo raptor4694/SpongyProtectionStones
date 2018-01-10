@@ -1,5 +1,7 @@
 # SpongyProtectionStones
 
+![](https://img.shields.io/github/downloads/rodel77/SpongyProtectionStones/total.svg)
+
 SpongyProtectionStones its a basic port of any PreciousStones plugin, just with the basic protection stone type
 
 Disclaimer: This plugin its still in beta! Its very hard to me add prevention of any way to grief, please consider support this project reporting issues and making pull requests! 
