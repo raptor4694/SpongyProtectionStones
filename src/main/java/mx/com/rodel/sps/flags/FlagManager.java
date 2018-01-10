@@ -28,7 +28,7 @@ public class FlagManager {
 	 * @param defaultVal bool, string, int
 	 */
 	public void registerFlag(String flag, Object defaultVal){
-		pl.getLogger().info("Flag {} (Default: {flag}) registered!", flag);
+		pl.getLogger().info("Flag {} (Default: {}) registered!", flag, defaultVal);
 		registeredFlags.put(flag, defaultVal);
 	}
 	
