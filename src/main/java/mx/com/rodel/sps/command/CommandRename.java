@@ -23,6 +23,8 @@ public class CommandRename implements ICommand {
 				}
 				if(args.length == 0) {
 					protection.setName(null);
+				} else {
+					protection.setName(String.join(" ", args));
 				}
 			}
 		}
