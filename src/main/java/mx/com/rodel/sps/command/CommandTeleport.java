@@ -41,6 +41,8 @@ public class CommandTeleport implements ICommand {
 				x = Double.parseDouble(m.group("x"));
 				y = Double.parseDouble(m.group("y"));
 				z = Double.parseDouble(m.group("z"));
+			} else {
+				x = y = z = 0.0;
 			}
 			
 			for(Protection protection : protections) {
