@@ -4,10 +4,17 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
+import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
+import org.spongepowered.api.event.entity.AttackEntityEvent;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -22,6 +29,46 @@ import mx.com.rodel.sps.protection.ProtectionStone;
 import mx.com.rodel.sps.utils.Helper;
 
 public class BlockListener {
+	@Listener
+	public void onInteract(InteractBlockEvent e) {
+		if(!SpongyPS.getInstance().getConfigManger().areContainersProtected())
+			return;
+		BlockSnapshot block = e.getTargetBlock();
+		Optional<Location<World>> optional = block.getLocation();
+		if(optional.isPresent()) {
+			Location<World> location = optional.get();
+			Optional<TileEntity> tileEntityOpt = location.getTileEntity();
+			if(tileEntityOpt.isPresent()) {
+				TileEntity tileEntity = tileEntityOpt.get();
+				if(tileEntity instanceof TileEntityCarrier) {
+					Optional<Player> playerOpt = e.getCause().first(Player.class);
+					if(playerOpt.isPresent()) {
+						Player player = playerOpt.get();
+						if(checkBuild(location, player)) {
+							e.setCancelled(true);
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@Listener
+	public void onAttackEntity(AttackEntityEvent e) {
+		if(!SpongyPS.getInstance().getConfigManger().areEntitiesProtected())
+			return;
+		DamageSource source = e.getCause().get(AttackEntityEvent.SOURCE, DamageSource.class).get();
+		if(source instanceof EntityDamageSource) {
+			Entity entity = ((EntityDamageSource)source).getSource();
+			if(entity instanceof Player) {
+				if(checkBuild(e.getTargetEntity().getLocation(), (Player)entity)) {
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+	
 	@Listener
 	public void onBlockPlace(ChangeBlockEvent.Place e){
 		Optional<Player> oplayer = Helper.playerCause(e.getCause());

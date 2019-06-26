@@ -39,6 +39,9 @@ public class SPSCommand implements CommandCallable {
 		commands.put("flag", new CommandFlag());
 		commands.put("list", new CommandList());
 		commands.put("rename", new CommandRename());
+		ICommand teleport = new CommandTeleport();
+		commands.put("teleport", teleport);
+		commands.put("tp", teleport);
 		
 		// Admin commands
 		commands.put("reload", new CommandReload());

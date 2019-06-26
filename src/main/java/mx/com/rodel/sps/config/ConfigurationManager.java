@@ -19,4 +19,12 @@ public class ConfigurationManager extends IConfiguration{
 	public boolean canMembersBreakProtectionStone() {
 		return getNode("config", "members-can-break-protection-stone").getBoolean();
 	}
+	
+	public boolean areContainersProtected() {
+		return getNode("config", "protect-containers").getBoolean();
+	}
+	
+	public boolean areEntitiesProtected() {
+		return getNode("config", "protect-entities").getBoolean();
+	}
 }
