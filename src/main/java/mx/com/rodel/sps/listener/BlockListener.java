@@ -43,7 +43,7 @@ public class BlockListener {
 			
 			// Sneaking?
 			if(player.get(Keys.IS_SNEAKING).orElse(false)){
-				Optional<ProtectionStone> ostone = SpongyPS.getInstance().getProtectionManager().getStoneByBlock(block.getState().getType());
+				Optional<ProtectionStone> ostone = SpongyPS.getInstance().getProtectionManager().getStoneByBlockState(block.getState());
 				if(ostone.isPresent()){
 					// START Protection placing code
 					ProtectionStone stone = ostone.get();
@@ -119,7 +119,9 @@ public class BlockListener {
 		if(op.isPresent()){
 			Protection protection = op.get();
 			
-			if(protection.getFlag("prevent-build", Boolean.class).orElse(true) && !protection.hasPermission(player.getUniqueId())){
+			if(protection.getFlag("prevent-build", Boolean.class).orElse(true) && !protection.hasPermission(player.getUniqueId())
+					|| !SpongyPS.getInstance().getConfigManger().canMembersBreakProtectionStone()
+						&& protection.getCenter().equals(blockLoc) && !protection.getOwner().equals(player.getUniqueId())){
 				player.sendMessage(SpongyPS.getInstance().getLangManager().translate("no-build", true));
 				return true;
 			}

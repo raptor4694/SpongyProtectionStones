@@ -2,15 +2,24 @@ package mx.com.rodel.sps.protection;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockState.MatcherBuilder;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
+import org.spongepowered.api.block.trait.BooleanTrait;
+import org.spongepowered.api.block.trait.EnumTrait;
+import org.spongepowered.api.block.trait.IntegerTrait;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -29,6 +38,7 @@ public class ProtectionManager extends IConfiguration{
 	private ConcurrentMap<String, ProtectionStone> stoneTypes = Maps.newConcurrentMap();
 	
 	private ConcurrentMap<UUID, ConcurrentMap<Vector2i, List<Protection>>> protectionByChunk = Maps.newConcurrentMap();
+	private ConcurrentMap<UUID, Set<Protection>> protectionByOwner = Maps.newConcurrentMap();
 	
 	public ProtectionManager(SpongyPS pl) {
 		super("stones.conf", pl);
@@ -40,12 +50,13 @@ public class ProtectionManager extends IConfiguration{
 
 		for(Entry<Object, ? extends CommentedConfigurationNode> node : childs.entrySet()){
 			try {
+				String key = node.getKey().toString();
 				ProtectionStone stone = getStone(node.getKey().toString(), node.getValue());
-				if(stoneTypes.containsKey(stone.getBlockType())){
-					pl.getLogger().warn("There are 2 or more protection stones with the same block type {}", stone.getBlockType().getId());
+				if(stoneTypes.containsKey(key)){
+					pl.getLogger().warn("There are 2 or more protection stones with the same id {}", key);
 				}
-				stoneTypes.put(node.getKey().toString(), stone);
-			} catch (Exception e) {
+				stoneTypes.put(key, stone);
+			} catch(Exception e) {
 				pl.getLogger().warn("Error loading protection stone {}:", node.getKey());
 				e.printStackTrace();
 			}
@@ -57,24 +68,63 @@ public class ProtectionManager extends IConfiguration{
 		return ImmutableList.copyOf(stoneTypes.values());
 	}
 	
+	@Deprecated
 	public Optional<ProtectionStone> getStoneByBlock(BlockType blockType){
-		for(Entry<String, ProtectionStone> stoneType : stoneTypes.entrySet()){
-			if(stoneType.getValue().getBlockType().equals(blockType)){
-				return Optional.of(stoneType.getValue());
+		for(ProtectionStone stoneType : stoneTypes.values()){
+			if(stoneType.getBlockType().equals(blockType)){
+				return Optional.of(stoneType);
 			}
 		}
 		return Optional.empty();
 	}
 	
+	public Optional<ProtectionStone> getStoneByBlockState(BlockState blockState) {
+		for(ProtectionStone stoneType : stoneTypes.values()) {
+			if(stoneType.getStateMatcher().matches(blockState)) {
+				return Optional.of(stoneType);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private ProtectionStone getStone(String name, CommentedConfigurationNode node) throws Exception{
 		int range = node.getNode("range").getInt();
 		String displayName = node.getNode("display-name").getString();
 		
 		String stype = node.getNode("block-type").getString();
 		Optional<BlockType> optional = Sponge.getRegistry().getType(BlockType.class, stype);
-		BlockType type = optional.orElseThrow(() -> new Exception("Cannot found block id "+stype));
+		BlockType type = optional.orElseThrow(() -> new Exception("Cannot find block id "+stype));
 	
-		return new ProtectionStone(name, type, range, displayName);
+		BlockState stateTemplate = type.getDefaultState();
+		MatcherBuilder matcher = BlockState.matcher(type);
+		
+		for(Map.Entry<Object, ? extends CommentedConfigurationNode> entry : node.getNode("block-state").getChildrenMap().entrySet()) {
+			if(entry.getKey() instanceof String) {
+				String key = (String)entry.getKey();
+				BlockTrait<?> trait = type.getTrait(key).orElseThrow(() -> new Exception("Cannot find " + type.getId() + " block trait " + key));
+				if(trait instanceof BooleanTrait) {
+					BooleanTrait booleanTrait = (BooleanTrait)trait;
+					boolean value = entry.getValue().getBoolean();
+					matcher.trait(booleanTrait, value);
+					stateTemplate = stateTemplate.withTrait(booleanTrait, value).get();
+				} else if(trait instanceof EnumTrait) {
+					EnumTrait enumTrait = (EnumTrait)trait;
+					Enum value = Enum.valueOf((Class<? extends Enum>)enumTrait.getValueClass(), entry.getValue().getString());
+					matcher.trait(enumTrait, value);
+					stateTemplate = stateTemplate.withTrait(enumTrait, value).get();
+				} else if(trait instanceof IntegerTrait) {
+					IntegerTrait intTrait = (IntegerTrait)trait;
+					int value = entry.getValue().getInt();
+					matcher.trait(intTrait, value);
+					stateTemplate = stateTemplate.withTrait(intTrait, value).get();
+				} else {
+					throw new Exception("Unsupported trait type " + trait.getClass().getName() + " for " + type.getId() + " block trait " + key);
+				}
+			}
+		}
+		
+		return new ProtectionStone(name, stateTemplate, matcher.build(), range, displayName);
 		
 	}
 	
@@ -126,6 +176,7 @@ public class ProtectionManager extends IConfiguration{
 				currentWorld.get(chunk).remove(protection);
 			}
 		}
+		protectionByOwner.get(protection.getOwner()).remove(protection);
 		SpongyPS.getInstance().getDatabaseManger().deleteProtection(protection.getID());
 	}
 	
@@ -142,14 +193,25 @@ public class ProtectionManager extends IConfiguration{
 			currentProtections.add(protection);
 			currentWorld.put(chunk, currentProtections);
 		}
+		protectionByOwner.computeIfAbsent(protection.getOwner(), key -> new HashSet<>())
+			.add(protection);
 	}
 	
 	public List<Protection> getProtectionsInChunk(UUID worldID, Vector2i chunk){
 		return protectionByChunk.get(worldID).getOrDefault(chunk, new ArrayList<>());
+	}	
+	
+	public Set<Protection> getProtectionsOwnedBy(Player player) {
+		return getProtectionsOwnedBy(player.getUniqueId());
+	}
+	
+	public Set<Protection> getProtectionsOwnedBy(UUID ownerUuid) {
+		return Collections.unmodifiableSet(protectionByOwner.computeIfAbsent(ownerUuid, key -> new HashSet<>()));
 	}
 
 	public int reload() {
 		protectionByChunk.clear();
+		protectionByOwner.clear();
 		int count = 0;
 		for(World world : Sponge.getServer().getWorlds()){
 			count += loadProtections(world);

@@ -7,4 +7,16 @@ public class ConfigurationManager extends IConfiguration{
 		super("config.conf", pl);
 		defaultNodes = true;
 	}
+	
+	public String getVisualizeBlock() {
+		return getNode("config", "visualize-block").getString();
+	}
+	
+	public long getVisualizeTime() {
+		return getNode("config", "visualize-time").getLong();
+	}
+	
+	public boolean canMembersBreakProtectionStone() {
+		return getNode("config", "members-can-break-protection-stone").getBoolean();
+	}
 }

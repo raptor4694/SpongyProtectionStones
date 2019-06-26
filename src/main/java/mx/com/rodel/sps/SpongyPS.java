@@ -152,7 +152,7 @@ public class SpongyPS {
 					configManager.getRoot().getNode("storage", "mysql", "protection-table").getString()));
 			databaseManager.connect();
 		} catch (Exception e2) {
-			log.error("Error connecting to db:");
+			log.error("Error connecting to database:");
 			e2.printStackTrace();
 		}
 

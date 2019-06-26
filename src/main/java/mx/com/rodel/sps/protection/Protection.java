@@ -35,6 +35,7 @@ public class Protection {
 	private Vector3i center, min, max;
 	private ProtectionStone type;
 	private FlagsEntry flags = new FlagsEntry();
+	private String name;
 	
 	public Protection(int id) {
 		this.id = id;
@@ -70,6 +71,20 @@ public class Protection {
 	
 	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
 		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags);
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String newName) {
+		if(newName != null) {
+			newName = newName.trim();
+			if(newName.isEmpty()) {
+				newName = null;
+			}
+		}
+		this.name = newName;
 	}
 	
 	public HashSet<Vector2i> getParentChunks(){
@@ -159,13 +174,28 @@ public class Protection {
 	public void visualize(Player player){
 		try {
 			for(Vector3i vector : getLineBounds()){
-				player.sendBlockChange(vector, BlockState.builder().blockType(Sponge.getRegistry().getType(BlockType.class, SpongyPS.getInstance().getConfigManger().getNode("config", "visualize-block").getString()).orElseThrow(()->new Exception("Invalid visualize-block id!"))).build());
+				player.sendBlockChange(vector, 
+						BlockState.builder()
+							.blockType(Sponge.getRegistry()
+									.getType(BlockType.class, 
+											SpongyPS.getInstance()
+												.getConfigManger()
+												.getVisualizeBlock())
+									.orElseThrow(()->new Exception("Invalid visualize-block id!")))
+							.build());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		Sponge.getScheduler().createTaskBuilder().execute(()->resetVisualize(player)).delay(SpongyPS.getInstance().getConfigManger().getNode("config", "visualize-time").getLong(), TimeUnit.SECONDS).submit(SpongyPS.getInstance());
+		Sponge.getScheduler()
+			.createTaskBuilder()
+			.execute(()->resetVisualize(player))
+			.delay(SpongyPS.getInstance()
+					.getConfigManger()
+					.getVisualizeTime(), 
+					TimeUnit.SECONDS)
+			.submit(SpongyPS.getInstance());
 	}
 	
 	public void resetVisualize(Player player){
