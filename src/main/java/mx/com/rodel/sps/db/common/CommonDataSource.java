@@ -59,6 +59,8 @@ public interface CommonDataSource {
 
 	abstract void updateOwner(int id, UUID owner, String ownername);
 	
+	abstract void updateName(int id, String newname);
+	
 	abstract void deleteProtection(int id);
 	
 	abstract Protection searchRegion(int id);

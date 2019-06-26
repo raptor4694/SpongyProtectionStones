@@ -29,7 +29,9 @@ public class CommandInfo implements ICommand{
 				if(SpongyPS.getInstance().getConfigManger().getNode("info", "show-id").getBoolean()){
 					info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-id").add("{id}", String.valueOf(protection.getID())), false));
 				}
-				
+				if(protection.hasName()) {
+					info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-name").add("{name}", protection.getName()), false));
+				}
 				info.add(SpongyPS.getInstance().getLangManager().translate(new LocaleFormat("info-owner").add("{owner}", protection.getOwnerName()), false));
 				info.add(SpongyPS.getInstance().getLangManager().translate(
 						new LocaleFormat("info-center")

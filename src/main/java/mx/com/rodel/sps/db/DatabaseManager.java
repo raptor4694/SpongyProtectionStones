@@ -65,6 +65,11 @@ public class DatabaseManager implements CommonDataSource{
 	}
 	
 	@Override
+	public void updateName(int id, String newname) {
+		dataSource.updateName(id, newname);
+	}
+	
+	@Override
 	public void updateMembers(int id, Map<UUID, String> members) {
 		dataSource.updateMembers(id, members);
 	}

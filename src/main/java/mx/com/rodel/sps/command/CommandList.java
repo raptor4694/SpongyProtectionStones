@@ -9,7 +9,6 @@ import org.spongepowered.api.service.pagination.PaginationList;
 
 import mx.com.rodel.sps.SpongyPS;
 import mx.com.rodel.sps.protection.Protection;
-import mx.com.rodel.sps.utils.Helper;
 
 public class CommandList implements ICommand {
 
@@ -21,15 +20,7 @@ public class CommandList implements ICommand {
 			
 			Collection<Protection> protections = SpongyPS.getInstance().getProtectionManager().getProtectionsOwnedBy(player);
 			
-			builder.contents(protections.stream()
-										.map(prot -> Helper.chatColor(Helper.format(
-												"%s%s at %s in %s", 
-												prot.getName() == null? "" : "\"" + prot.getName() + "\" ", 
-												prot.getType().getDisplayName(), 
-												prot.getCenter().getPosition(), 
-												prot.getCenter().getExtent())))
-										.collect(Collectors.toList()))
-				.sendTo(player);
+			builder.contents(protections.stream().map(Protection::toText).collect(Collectors.toList())).sendTo(player);
 		}
 		return true;
 	}

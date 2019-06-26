@@ -189,9 +189,8 @@ public class ProtectionManager extends IConfiguration{
 	private void putProtection(Protection protection, World world){
 		ConcurrentMap<Vector2i, List<Protection>> currentWorld = protectionByChunk.get(world.getUniqueId());
 		for(Vector2i chunk : protection.getParentChunks()){
-			List<Protection> currentProtections = currentWorld.getOrDefault(chunk, new ArrayList<>());
+			List<Protection> currentProtections = currentWorld.computeIfAbsent(chunk, key -> new ArrayList<>());
 			currentProtections.add(protection);
-			currentWorld.put(chunk, currentProtections);
 		}
 		protectionByOwner.computeIfAbsent(protection.getOwner(), key -> new HashSet<>())
 			.add(protection);

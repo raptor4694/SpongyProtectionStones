@@ -13,6 +13,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -57,7 +58,7 @@ public class Protection {
 		max = vertices[1];
 	}
 	
-	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
+	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags, String name) {
 		this.id = id;
 		this.world = world;
 		this.owner = owner;
@@ -67,10 +68,29 @@ public class Protection {
 		this.max = max;
 		this.members = members;
 		this.flags = flags==null || flags.isEmpty() ? this.flags : FlagsEntry.deserialize(flags);
+		this.name = name;
+	}
+	
+	public Protection(int id, World world, UUID owner, String owner_name, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
+		this(id, world, owner, owner_name, center, min, max, members, flags, null);
+	}
+	
+	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags, String name) {
+		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags, name);
 	}
 	
 	public Protection(int id, World world, Player owner, Vector3i center, Vector3i min, Vector3i max, Map<UUID, String> members, String flags) {
-		this(id, world, owner.getUniqueId(), owner.getName(), center, min, max, members, flags);
+		this(id, world, owner, center, min, max, members, flags, null);
+	}
+	
+	public Text toText() {
+		return Text.builder(String.format(
+					"%s%s at %s in %s", 
+					hasName()? "\"" + name + "\" " : "", 
+					type.getDisplayName(), 
+					center,
+					world.getName()))
+				.build();
 	}
 	
 	public String getName() {
@@ -85,6 +105,7 @@ public class Protection {
 			}
 		}
 		this.name = newName;
+		SpongyPS.getInstance().getDatabaseManger().updateName(id, name);
 	}
 	
 	public HashSet<Vector2i> getParentChunks(){
@@ -315,6 +336,10 @@ public class Protection {
 
 	public void setID(int id) {
 		this.id = id;
+	}
+
+	public boolean hasName() {
+		return name != null;
 	}
 
 }

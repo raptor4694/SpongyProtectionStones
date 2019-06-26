@@ -74,6 +74,7 @@ public class MySQLAdapter implements CommonDataSource{
 					+ "`members` text default null,"
 					+ "`flags` text default null,"
 					+ "`type` varchar(255),"
+					+ "`name` varchar(255) default null,"
 					+ "primary key (`id`)"
 					+ ") "
 					+ "ENGINE=InnoDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;";
@@ -130,7 +131,8 @@ public class MySQLAdapter implements CommonDataSource{
 				new Vector3i(rs.getInt("minx"), rs.getInt("miny"), rs.getInt("minz")), 
 				new Vector3i(rs.getInt("maxx"), rs.getInt("maxy"), rs.getInt("maxz")), 
 				members, 
-				rs.getString("flags"));
+				rs.getString("flags"),
+				rs.getString("name"));
 	}
 
 	@Override
@@ -181,6 +183,19 @@ public class MySQLAdapter implements CommonDataSource{
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void updateName(int id, String newname) {
+		try(Connection conn = getDataSource().getConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update "+protection_table+" set `name`=? where `id`=?");
+			ps.setString(1, newname);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
